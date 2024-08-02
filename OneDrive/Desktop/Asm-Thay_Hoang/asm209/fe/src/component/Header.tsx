@@ -6,30 +6,28 @@ import { Menu, MenuItem } from "@mui/material";
 import { TOKEN_STORAGE_KEY, USER_INFO_STORAGE_KEY } from "../constants";
 import { IProduct } from "../interface/IProduct";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { instance } from "../instance/instance";
 
 const Header = () => {
     const [search, setSearch] = useState('');
     const [product, setProduct] = useState([] as IProduct[]); // lưu dữ liệu ban đầu
     const [products, setProducts] = useState([] as IProduct[]); // lưu dữ liệu search
 
-    const dataLocal = localStorage.getItem('login');
-    const [dataLocalStorage, setDataLocalStorage] = useState('')
-    useEffect(() => {
-        if (dataLocal) {
-            const newData  = JSON.parse(dataLocal)
-            setDataLocalStorage(newData);
-        }
-    }, [])
+    const dataLocal = JSON.parse(localStorage.getItem('W209_USER_INFO') as string)?._id;
     //cart
-    const [cart, setCart] = useState<any>([])
+    const [cart, setCart] = useState<any>([]);
     useEffect(() => {
         const fecth = async () => {
-            const { data } = await axios.get(`http://localhost:4200/api/cart/${dataLocalStorage?.user?._id}`)
-            setCart(data?.cart?.products)
+            if (dataLocal) {
+                const { data } = await axios.get(`http://localhost:4200/api/cart/${dataLocal}`)
+                console.log(data)
+                setCart(data?.cart?.products)
+            }
         }
         fecth()
     }, [])
-    console.log(cart)
+    // console.log(cart)
 
     useEffect(() => {
         (async () => {
@@ -38,15 +36,21 @@ const Header = () => {
         })()
     }, [])
 
-    //xoa cart
-    const handleDelete = async (id: any) => {
+    // xoa cart-----------------------------------------------------------
+    const handleDelete = async (id: number | string) => {
         const confirm = window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?');
         if (confirm) {
             try {
-                await axios.delete(`http://localhost:4200/api/cart/${dataLocalStorage?.user?._id}/${id}`);
-                setCart(cart.filter((item: any) => item._id !== id));
+                // Make the DELETE request to the backend
+                 await axios.put(`http://localhost:4200/api/cart/${dataLocal}/${id}`);
+                setCart((prevCart:any) => prevCart.filter((item: any) => item._id !== id));
+
+                // Optionally, show a success message
+                toast.success("Sản phẩm đã được xóa khỏi giỏ hàng.");
             } catch (error) {
                 console.error('Failed to delete item:', error);
+                // Optionally, show an error message
+                toast.error("Có lỗi xảy ra khi xóa sản phẩm.");
             }
         }
     };
@@ -226,8 +230,12 @@ const Header = () => {
                                     stroke="currentColor" className="size-6 w-[24px]">
                                     <path strokeLinecap="round" strokeLinejoin="round"
                                         d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                                </svg>
-                                <span className="absolute bg-red-500 top-2 rounded-[50%] w-[16px] h-[16px] text-xs text-white">0</span>
+                                </svg> 
+                                    
+                                        <span className="absolute bg-red-500 top-2 rounded-[50%] w-[16px] h-[16px] text-xs text-white">{cart?.length}</span>
+
+                                
+                                
                             </button>
                         </div>
                     </div>
@@ -237,26 +245,32 @@ const Header = () => {
             <Drawer open={isOpen} onClose={handleClose} position="right">
                 <Drawer.Header title="Cart" />
                 <Drawer.Items>
-                    {cart.map((cat: any) => (
+                    {
+                        cart?.map((item: any) => (
+                            <div className="flex *:mx-1 my-1 items-center border-b-2 pb-2 mb-2">
+                                <div className="w-1/5">
+                                    <img src={item?.product?.images} alt="" className="border rounded-lg p-1" />
+                                </div>
+                                <div className="w-3/5">
+                                    <h3 className="text-base font-semibold">{item?.product?.name}</h3>
+                                    <span>{item?.product?.price}</span>
+                                    <p className="text-xs text-red-500 font-semibold">{item?.product?.price * item?.quantity} VNĐ</p>
+                                </div>
+                                <div>
+                                    <span>{item?.quantity}</span>
+                                </div>
+                                <div className="1/5">
+                                    <button className="border p-2 rounded-lg bg-gray-200 hover:bg-gray-400" onClick={() => handleDelete(item.product._id)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                        </svg>
 
-                        <div className="flex *:mx-1 my-1 items-center border-b-2 pb-2 mb-2">
-                            <div className="w-1/5">
-                                <img src={cat?.product?.images} alt="" className="border rounded-lg p-1" />
+                                    </button>
+                                </div>
                             </div>
-                            <div className="w-3/5">
-                                <h3 className="text-base font-semibold">{cat?.product?.name}</h3>
-                                <p className="text-xs text-red-500 font-semibold">{cat?.product?.price} VNĐ</p>
-                            </div>
-                            <div className="1/5">
-                                <button className="border p-2 rounded-lg bg-gray-200 hover:bg-gray-400" onClick={()=>handleDelete(cat._id!)}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                    </svg>
-
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                        ))
+                    }
+                    {/* <button className="border p-2 rounded-lg bg-gray-200 hover:bg-gray-400" onClick={()=>handleDelete(cat._id!)}> */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <a
                             href="#"

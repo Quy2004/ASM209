@@ -31,7 +31,7 @@ function App() {
       try {
         const response = await instance.get("/products");
         const { data } = response;
-        console.log(data);
+        // console.log(data);
         if (Array.isArray(data.data)) {
           setProduct(data.data);
         } else {

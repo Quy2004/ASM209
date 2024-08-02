@@ -31,7 +31,7 @@ const Detail = () => {
             {/* Detail */}
             <main className="flex mx-auto w-[1300px] gap-2 mt-5 border rounded-xl *:mt-3">
                 <div className="w-[45%]">
-                    <img src="../src/assets/images/shirt.png" className="" alt="" />
+                    <img src={detail?.images} className="" alt="" />
                 </div>
                 <div className="w-[55%] ml-8">
                     <div className="">

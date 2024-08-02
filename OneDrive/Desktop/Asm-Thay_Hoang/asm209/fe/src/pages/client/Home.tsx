@@ -4,14 +4,15 @@ import { instance } from "../../instance/instance";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
- // Make sure to import your axios instance
+ // Make sure to import your instance instance
 
 type Props = {
     setProduct: IProduct[];
 }
 
 const Home = ({ setProduct }: Props) => {
-    const dataLocal = localStorage.getItem('login');
+    const [cart, setCart] = useState<any[]>([]);
+    const dataLocal = localStorage.getItem('W209_USER_INFO');
     const [dataLocalStorage, setDataLocalStorage] = useState('')
     useEffect(() => {
         if (dataLocal) {
@@ -22,14 +23,15 @@ const Home = ({ setProduct }: Props) => {
     const addtocart = async (productId: string) => {
         console.log(productId)
         try {
-            const { data } = await instance.post(`cart/${dataLocalStorage?.user?._id}`, { productId, quantity: 1 });
+            const { data } = await instance.post(`cart`, {userId:dataLocalStorage?._id,
+                product: productId, quantity: 1 });
             toast.success("Thêm thành công")
             console.log(data);
         } catch (error) {
             console.error('Failed to add to cart:', error);
         }
     }
-    
+   
     return (
         <>
             <div className="banner">
@@ -37,7 +39,7 @@ const Home = ({ setProduct }: Props) => {
             </div>
             <div>
                 <h1 className="text-center text-2xl font-semibold my-5">Sản Phẩm Hot</h1>
-                <div className="grid grid-cols-4 w-[1400px] mx-auto rounded-lg shadow-lg border  bg-gray-100 gap-x-[10px] gap-y-[25px] px-3 py-6">
+                <div className="grid grid-cols-4 w-[1400px] mx-auto rounded-lg shadow-lg border mx-auto bg-gray-100 gap-x-[10px] gap-y-[25px] px-3 py-6">
                     {
                         setProduct.slice(0, 8).map((product) => (
                             <div className="text-center" key={product._id}>

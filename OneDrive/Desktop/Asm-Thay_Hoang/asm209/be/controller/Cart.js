@@ -2,57 +2,83 @@ import Cart from "../models/Cart.js";
 import { Product } from "../models/product.js";
 
 
-export const addToCart = async (req, res, next) => {
-	try {
-		const { productId, quantity } = req.body;
-		const product = await Product.findById(productId);
-		if (!product) return res.status(404).json({ message: "Product not found" });
-		console.log(req.body.userId);
-		let cart = await Cart.findOne({ userId: req.body.user_id });
+export const addToCart = async (req, res) => {
+	const { product, quantity, userId } = req.body;
+    try {
+      // Kiểm tra người dùng có giỏ hàng chưa
+      let cart = await Cart.findOne({ userId: userId });
+      if (cart) {
+        // Kiểm tra sản phẩm đó có trong giỏ hàng không
+        const productIndex = cart.products.findIndex(
+          (produc) => produc.product.toString() == product
+        );
+		console.log(productIndex)
+        if (productIndex > -1) {
+          // Nếu có thì cộng thêm số lượng sản phẩm
+          cart.products[productIndex].quantity += quantity;
+        } else {
+          // Nếu không có thì push thêm sản phẩm vào mảng products
+          cart.products.push({ product, quantity });
+        }
+        await cart.save();
+      } else {
+		  // Nếu người dùng chưa có giỏ hàng thì push thêm vào
+		   cart = await Cart.create({
+			  userId,
+			  products: [{ product, quantity }],
+			});
+      }
 
-		// Nếu chưa có giỏ hàng nào của user này, tạo mới giỏ hàng
-		if (!cart) cart = new Cart({ userId: req.body.userId, products: [], totalPrice: 0 });
-		console.log(cart)
-		const findIndex = cart.products.findIndex((p) => p.product.toString() == productId);
-			// Nếu sản phẩm này chưa từng có trong giỏ hàng, cần thêm sản phẩm này cùng số lượng vào giỏ hàng,
-			cart.products.push({ product: productId, quantity });
-		cart.totalPrice += product.price * quantity;
-		await cart.save();
-		return res.status(200).json({
-			message: "Add to cart successfully",
-			cart,
-		});
-	} catch (error) {
-		next(error);
+      // Lấy ra thông tin sản phẩm của giỏ hàng
+    //   const listCart = await cartSchema
+    //     .findById(cart._id)
+    //     .populate({
+    //       path: "products.productId",
+    //       select: "name price price_discount images",
+    //     })
+    //     .exec();
+
+      return res.status(200).json({
+        message:
+           "Cart created successfully",
+       		 data: cart,
+      });
+    } catch (error) {
+      return res.status(400).send(error.message);
 	}
 };
 
 export const removeFromCart = async (req, res, next) => {
 	try {
-		const userId = req.userId;
-		const { productId } = req.body;
-		let cart = await Cart.findOne({ userId });
-		if (!cart) return res.status(404).json({ message: "Cart not found" });
-		const findIndex = cart.products.findIndex((p) => p.product.toString() === productId);
-		if (findIndex === -1) return res.status(404).json({ message: "Product not found in cart" });
-		const product = cart.products[findIndex];
-		cart.totalPrice -= product.quantity * product.product.price;
-		cart.products = cart.products.filter((p) => p.product.toString() !== productId);
-		await cart.save();
-		return res.status(200).json({
-			message: "Remove product from cart successfully",
-			cart,
+		const { userId, idPro } = req.params;
+		const cart = await Cart.findOne({ userId: userId });
+		if (!cart) throw new ApiError(404, "Cart Not Found");
+  
+		const newProductCart = cart.products.filter(
+		  (item) => item.product != idPro
+		);
+		const updateCart = await Cart.findByIdAndUpdate(
+		  cart._id,
+		  { products: newProductCart },
+		  {
+			new: true,
+		  }
+		);
+		if (!updateCart) throw new ApiError(404, "Cart Not Found");
+		return res.status(201).json({
+		  message: "Delete Product Cart Successfull",
+		  data: updateCart,
 		});
-	} catch (error) {
-		next(error);
-	}
+	  } catch (error) {
+		return res.status(400).send(error.message);
+	  }
 };
 
 export const getCart = async (req, res, next) => {
 	try {
-		const userId = req.user_id;
+		const userId = req.params.user_id;
+		console.log(userId);
 		const cart = await Cart.findOne({ userId : userId }).populate("products.product");
-        console.log(cart);
 		return res.json({
 			message: "Get cart successfully",
 			cart,

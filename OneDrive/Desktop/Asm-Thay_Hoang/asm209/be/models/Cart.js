@@ -8,7 +8,7 @@ const cartItem = new Schema({
 const cartSchema = new Schema({
 	userId: { type: Schema.Types.ObjectId, ref: "User"},
 	products: [cartItem],
-	totalPrice: { type: Number, required: true },
+	totalPrice: { type: Number, default: 0 },
 });
 
 export default model("shopping-cart", cartSchema);
