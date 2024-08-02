@@ -18,7 +18,7 @@ import AddCate from "./pages/admin/categories/AddCate";
 import Products from "./pages/admin/products/Products";
 import AddProduct from "./pages/admin/products/Addproduct";
 import EditCate from "./pages/admin/categories/EditCate";
-import ShopAll from "./component/Layout/ShopAll";
+
 
 
 function App() {
@@ -55,8 +55,7 @@ function App() {
   const handleDeletePr = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete")) {
       await instance.delete(`/products/${id}`)
-      setProduct(products.filter((item) => item._id !== id))
-      await loadData()
+
       await loadPr()
       alert("delete product successfully")
     }
@@ -67,9 +66,28 @@ function App() {
     console.log(data);
     setProduct([...products, data.data])
     alert("add product successfully")
-    await loadData()
+    await loadPr()
     navigate('/admin/products')
   }
+
+  // edit product-----------------------------------------------------
+
+    const handleEditPr = async (product: IProduct) => {
+      try {
+        const { data } = await instance.put(`/products/${product.id}`, product);
+        setProduct(products.map((item) =>
+            item._id === data.data.id ? data.data : item
+        ));
+        
+        alert('Updated successfully');
+        navigate('/admin/products');
+        await loadPr()
+      } catch (error) {
+        console.error('Error updating product:', error);
+        alert('Failed to update product');
+      }
+    };
+  
 
   // categories---------------------------------------------------
   const loadData = async () => {
@@ -130,6 +148,7 @@ function App() {
             <Route path="categories/editcate/:id" element={<EditCate onEdit={handleEditCate} />} />
             <Route path="products" element={<Products products={products} onDel={handleDeletePr} />} />
             <Route path="products/addproduct" element={<AddProduct onAdd={handleAddPr} />} />
+            <Route path="products/editproduct/:id" element={<Editproduct onEdit={handleEditPr}/>} />
           </Route>
         </Routes>
       </main >
