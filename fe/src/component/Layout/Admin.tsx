@@ -1,11 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import CountTimer from "../CountTimer";
+import { IProduct } from "../../interface/IProduct";
+import { instance } from "../../instance/instance";
 
 
 const AdminLayout = () => {
     const [activeTab, setActiveTab] = useState('Tất cả');
+    const [search, setSearch] = useState('');
+    const [product, setProduct] = useState([] as IProduct[]); // lưu dữ liệu ban đầu
+    const [products, setProducts] = useState([] as IProduct[]); // lưu dữ liệu search
+    const [showSearchResults, setShowSearchResults] = useState(true);
+    // const navigate = useNavigate();
+    useEffect(() => {
+        (async () => {
+            const { data } = await instance.get("/products")
+            setProduct(data.data)
+        })()
+    }, [])
 
+    useEffect(() => {
+        let productSearch = [...product]
+        productSearch = productSearch.filter(pro => pro.name.toUpperCase().includes(search.toUpperCase()))
+        setProducts(productSearch)
+    }, [search, product])
+
+    const handleProductClick = (_id: Number | string) => {
+        setShowSearchResults(false); // Ẩn kết quả tìm kiếm khi người dùng click sản phẩm
+        // navigate(`/detail/${id}`)
+    };
     const tabs = [
         { name: 'Dashboard', link: '/admin' },
         { name: 'Quản lí danh mục', link: 'categories' },
@@ -41,13 +64,40 @@ const AdminLayout = () => {
                     <div className="breadcrumb flex justify-between items-center  mx-5 mb-3 border rounded-lg border-gray-300 *:px-10 *:py-2.5">
                         <form className="">
                             <div className="relative">
-                                <input type="search" id="default-search" className="block w-full py-2 px-3 text-sm text-gray-900 border border-gray-300 rounded-3xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
-                                <button type="submit" className="text-white absolute end-1 bottom-0.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-3xl text-sm px-2 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                <input type="text" id="default-search" onChange={(e) => { setSearch(e.target.value); setShowSearchResults(true); }}
+                                    className="block w-full py-2 px-3 text-sm text-gray-900 border border-gray-300 rounded-3xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                                <button type="button" className="text-white absolute end-1 bottom-0.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-3xl text-sm px-2 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                     <svg className="w-4 h-4 text-white dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                     </svg>
                                 </button>
+                                {
+                                    search && showSearchResults && (
+                                        <div className="absolute bg-gray-100 w-max py-1 px-1">
+                                            <div className="w-auto">
+                                                {
+                                                    products && products.length > 0 ? (
+                                                        products.map((pro) => (
+                                                            <Link to={`detail/${pro._id}`} onClick={() => handleProductClick(pro._id!)}
+                                                                className="flex hover:bg-gray-300 w-auto">
+                                                                <img src={`${pro.images}`} className="w-12 h-12 mr-3" />
+                                                                <h1 className="mr-4 text-sm font-medium">{pro.name}</h1>
+                                                                <b className="text-sm text-red-500">{pro.price}</b>
+                                                            </Link>
+
+                                                        ))
+                                                    ) : (
+                                                        <div>
+                                                            <h1>Khong co san pham ban can tim</h1>
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                    )
+                                }
                             </div>
+
                         </form>
                         <div className="date-time flex items-center *:gap-1 font-semibold">
                             <span className="mr-3">{<CountTimer />}</span>

@@ -67,7 +67,7 @@ const Products = ({ products, onDel }: Props) => {
                                         {item.name}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {categories.find(c => c._id === item.categoryId)?.name || 'Loading...'}
+                                    {categories.find(c => c._id === item.categoryId)?.name || 'Loading...'}
                                     </td>
                                     <td className="px-6 py-4">
                                         {item.price}

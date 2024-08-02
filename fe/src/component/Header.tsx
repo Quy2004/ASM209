@@ -11,7 +11,8 @@ const Header = () => {
     const [search, setSearch] = useState('');
     const [product, setProduct] = useState([] as IProduct[]); // lưu dữ liệu ban đầu
     const [products, setProducts] = useState([] as IProduct[]); // lưu dữ liệu search
-
+    const [showSearchResults, setShowSearchResults] = useState(true);
+    // const navigate = useNavigate();
     useEffect(() => {
         (async () => {
             const { data } = await instance.get("/products")
@@ -23,7 +24,12 @@ const Header = () => {
         let productSearch = [...product]
         productSearch = productSearch.filter(pro => pro.name.toUpperCase().includes(search.toUpperCase()))
         setProducts(productSearch)
-    }, [search])
+    }, [search, product])
+
+    const handleProductClick = (_id: Number | string) => {
+        setShowSearchResults(false); // Ẩn kết quả tìm kiếm khi người dùng click sản phẩm
+        // navigate(`/detail/${id}`)
+    };
 
     console.log(products);
     // console.log(search);
@@ -92,7 +98,7 @@ const Header = () => {
                         <div className="lg:gap-x-6 mb:gap-x-4 lg:-translate-x-[60px] mb:-translate-x-[20px]">
                             <form className="">
                                 <div className="relative">
-                                    <input type="text" id="default-search" onChange={(e) => setSearch(e.target.value)}
+                                    <input type="text" id="default-search" onChange={(e) => { setSearch(e.target.value); setShowSearchResults(true); }}
                                         className="block w-full py-2 px-3 text-sm text-gray-900 border border-gray-300 rounded-3xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
                                     <button type="button" className="text-white absolute end-1 bottom-0.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-3xl text-sm px-2 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                         <svg className="w-4 h-4 text-white dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -100,15 +106,18 @@ const Header = () => {
                                         </svg>
                                     </button>
                                     {
-                                        search && (
-                                            <div className="absolute bg-gray-500  ">
-                                                <div>
+                                        search && showSearchResults && (
+                                            <div className="absolute bg-gray-100 w-max py-1 px-1">
+                                                <div className="w-auto">
                                                     {
                                                         products && products.length > 0 ? (
                                                             products.map((pro) => (
-                                                                <div>
-                                                                    <h1>{pro.name}</h1>
-                                                                </div>
+                                                                <Link to={`detail/${pro._id}`} onClick={() => handleProductClick(pro._id!)}
+                                                                    className="flex hover:bg-gray-300 w-auto">
+                                                                    <img src={`${pro.images}`} className="w-12 h-12 mr-3" />
+                                                                    <h1 className="mr-4 text-sm font-medium">{pro.name}</h1>
+                                                                    <b className="text-sm text-red-500">{pro.price}</b>
+                                                                </Link>
 
                                                             ))
                                                         ) : (
