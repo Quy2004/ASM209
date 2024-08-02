@@ -69,44 +69,24 @@ export const getById = async (req, res) => {
 };
 
 export const putProduct = async (req, res) => {
-    if (!req.files || req.files.length === 0) {
-        return res.status(400).send('No files uploaded or field name is incorrect');
-    }
-
     try {
-        // Tạo đối tượng hình ảnh mới
-        const imageData = {
-            image1: req.files[0] ? req.files[0].path : undefined,
-            image2: req.files[1] ? req.files[1].path : undefined
-        };
-
-        // Lưu hình ảnh vào bảng Image
-        const savedImages = await Image.create(imageData);
-
-        // Cập nhật sản phẩm và liên kết với hình ảnh mới
-        const updatedProductData = {
-            name: req.body.name,
-            images: savedImages._id,
-            price: req.body.price,
-            desc: req.body.desc,
-            categoryId: req.body.categoryId
-        };
-
-        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updatedProductData, { new: true });
+        const updatedProduct = await Product.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true } 
+        )
 
         if (!updatedProduct) {
             return res.status(404).send({ status: false, message: 'Product not found' });
         }
 
-        res.status(200).send({
-            status: true,
-            message: 'Product updated successfully with images!',
-            product: updatedProduct
-        });
+        res.status(200).send({ status: true, message: 'Product updated successfully', data: updatedProduct });
     } catch (error) {
-        res.status(500).send({ status: false, message: 'Error updating product: ' + error });
+        console.error('Error updating product:', error); // Log lỗi chi tiết để dễ dàng theo dõi
+        res.status(500).send({ status: false, message: 'Error updating product: ' + error.message });
     }
 };
+
 
 export const deleteProduct = async (req, res) => {
     try {
