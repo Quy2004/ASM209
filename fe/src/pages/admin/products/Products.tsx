@@ -67,7 +67,7 @@ const Products = ({ products, onDel }: Props) => {
                                         {item.name}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {categories.find(c => c._id === item.categoryId)?.name || 'Loading...'}
+                                    {categories.find(c => c._id === item.categoryId)?.name || 'Loading...'}
                                     </td>
                                     <td className="px-6 py-4">
                                         {item.price}
@@ -79,7 +79,7 @@ const Products = ({ products, onDel }: Props) => {
                                         ) : (
                                             <img src={item.images} className="w-24 h-24 object-cover" />
                                         )} */}
-                                        <img src={item.images} className="w-24 h-24 object-cover" />
+                                        <img src={`${item.images}`} className="w-24 h-24 object-cover" />
 
                                     </td>
                                     <td className="px-6 py-4">

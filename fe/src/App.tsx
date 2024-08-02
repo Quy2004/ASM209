@@ -18,7 +18,7 @@ import AddCate from "./pages/admin/categories/AddCate";
 import Products from "./pages/admin/products/Products";
 import AddProduct from "./pages/admin/products/Addproduct";
 import EditCate from "./pages/admin/categories/EditCate";
-import Shop from "./pages/client/Shop";
+import ShopAll from "./component/Layout/ShopAll";
 
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
       try {
         const response = await instance.get("/products");
         const { data } = response;
-        console.log(data);
+        // console.log(data);
         if (Array.isArray(data.data)) {
           setProduct(data.data);
         } else {
@@ -55,7 +55,7 @@ function App() {
   const handleDeletePr = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete")) {
       await instance.delete(`/products/${id}`)
-      setProduct(products.filter((item) => item.id !== id))
+      setProduct(products.filter((item) => item._id !== id))
       await loadData()
       await loadPr()
       alert("delete product successfully")
@@ -87,7 +87,7 @@ function App() {
   const handleDeleteCate = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete")) {
       await instance.delete(`/category/${id}`)
-      setCagtegory(categories.filter((item) => item.id !== id))
+      setCagtegory(categories.filter((item) => item._id !== id))
       await loadData()
       alert("delete category successfully")
     }
@@ -103,8 +103,8 @@ function App() {
   }
   // edit ---------------------------------------------------------------
   const handleEditCate = async (cate: ICategory) => {
-    const { data } = await instance.put(`category/${cate.id}`, cate)
-    setCagtegory(categories.map((item) => item.id == data.id ? item : data))
+    const { data } = await instance.put(`category/${cate._id}`, cate)
+    setCagtegory(categories.map((item) => item._id == data.id ? item : data))
     alert("Updated successfully")
     await loadData()
     navigate('/admin/categories')
@@ -116,7 +116,8 @@ function App() {
           <Route path="" element={<WebsiteLayout />}>
             <Route index path="" element={<Home setProduct={products} />} />
             <Route path="detail/:id" element={<Detail />} />
-            <Route path="shop" element={<Shop />} />
+            <Route path="shop" element={<ShopAll products={products} categories={categories} />} >
+            </Route>
           </Route>
           <Route path="login" element={<AuthForm isLogin />} />
           <Route path="register" element={<AuthForm />} />
@@ -131,7 +132,7 @@ function App() {
             <Route path="products/addproduct" element={<AddProduct onAdd={handleAddPr} />} />
           </Route>
         </Routes>
-      </main>
+      </main >
     </>
   );
 }

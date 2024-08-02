@@ -21,7 +21,7 @@ const Home = ({ setProduct }: Props) => {
                                 <hr className="mt-2 w-6 mx-auto bg-gray-500 h-[2px]" />
                                 <p className="mx-2 mt-2 mb-4">{product.desc}</p>
                                 <div className="relative group w-[300px] mb-2 rounded-xl place-items-center">
-                                    <img className="w-[220px] mx-auto mb-2" src="./src/assets/images/shirt.png" alt="" />
+                                    <img className="w-[220px] h-[220px] mx-auto mb-2" src={`${product.images}`} alt="" />
                                     <Link to={`detail/${product._id}`}
                                         className="absolute scale-0 group-hover:scale-100 group-hover:translate-y-0 -translate-y-[200%] duration-200 z-[2] lg:w-[152px] mb:w-[136px] lg:h-[64px] mb:h-[48px] rounded-[100px] border-none bg-[#1A1E2630] text-sm text-white backdrop-blur-md left-1/2 top-1/2 transform -translate-x-1/2 flex items-center justify-center">
                                         Details</Link>
