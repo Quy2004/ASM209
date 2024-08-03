@@ -25,9 +25,8 @@ const userSchema = new Schema(
       default: null,
     },
     role: {
-      type: String,
-      enum: ["ADMIN", "USER"],
-      default: "USER",
+      type: Number,
+      default: 0,
     },
     passwordResetToken: {
       type: String,

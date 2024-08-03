@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom"
 import { IProduct } from "../../interface/IProduct";
 import { instance } from "../../instance/instance";
 import { toast } from "react-toastify";
+import { USER_INFO_STORAGE_KEY } from "../../constants";
 
 
 const Detail = () => {
@@ -19,7 +20,7 @@ const Detail = () => {
 
     //add to cart
     const [cart, setCart] = useState<any[]>([]);
-    const dataLocal = localStorage.getItem('W209_USER_INFO');
+    const dataLocal = localStorage.getItem(USER_INFO_STORAGE_KEY);
     const [dataLocalStorage, setDataLocalStorage] = useState('')
     useEffect(() => {
         if (dataLocal) {
@@ -28,6 +29,9 @@ const Detail = () => {
         }
     }, [])
     const addtocart = async (productId: string) => {
+        if (!dataLocal) {
+            return toast.info('Vui lòng đăng nhập tài khoản!');
+        }
         console.log(productId)
         try {
             const { data } = await instance.post(`cart`, {
