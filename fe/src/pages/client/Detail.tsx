@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom"
 import { IProduct } from "../../interface/IProduct";
 import { instance } from "../../instance/instance";
+import { toast } from "react-toastify";
 
 
 const Detail = () => {
@@ -15,6 +16,30 @@ const Detail = () => {
         }
         fetchData()
     }, [])
+
+    //add to cart
+    const [cart, setCart] = useState<any[]>([]);
+    const dataLocal = localStorage.getItem('W209_USER_INFO');
+    const [dataLocalStorage, setDataLocalStorage] = useState('')
+    useEffect(() => {
+        if (dataLocal) {
+            const newData = JSON.parse(dataLocal)
+            setDataLocalStorage(newData);
+        }
+    }, [])
+    const addtocart = async (productId: string) => {
+        console.log(productId)
+        try {
+            const { data } = await instance.post(`cart`, {
+                userId: dataLocalStorage?._id,
+                product: productId, quantity: 1
+            });
+            toast.success("Thêm thành công")
+            console.log(data);
+        } catch (error) {
+            console.error('Failed to add to cart:');
+        }
+    }
     return (
         <>
             <div className="flex items-center bg-gray-200">
@@ -40,13 +65,13 @@ const Detail = () => {
                         <div className="mt-3">
                             <p className="font-medium">Mô tả sản phẩm: </p>
                             <p>
-                               {detail?.desc}
+                                {detail?.desc}
                             </p>
                         </div>
                     </div>
                     {/*  */}
-                    <Button outline gradientDuoTone="cyanToBlue" className="mt-5">
-                        Payment
+                    <Button outline gradientDuoTone="cyanToBlue" className="mt-5" onClick={() => addtocart(detail?._id)}>
+                        Add TO Cart
                     </Button>
                 </div>
             </main>
