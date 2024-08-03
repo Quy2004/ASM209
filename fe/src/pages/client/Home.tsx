@@ -1,11 +1,34 @@
 import { Link } from "react-router-dom"
 import { IProduct } from "../../interface/IProduct"
+import { useEffect, useState } from "react"
+import { instance } from "../../instance/instance"
+import { toast } from "react-toastify"
 
 type Props = {
     setProduct: IProduct[]
 }
 
 const Home = ({ setProduct }: Props) => {
+    const [cart, setCart] = useState<any[]>([]);
+    const dataLocal = localStorage.getItem('W209_USER_INFO');
+    const [dataLocalStorage, setDataLocalStorage] = useState('')
+    useEffect(() => {
+        if (dataLocal) {
+            const newData  = JSON.parse(dataLocal)
+            setDataLocalStorage(newData);
+        }
+    }, [])
+    const addtocart = async (productId: string) => {
+        console.log(productId)
+        try {
+            const { data } = await instance.post(`cart`, {userId:dataLocalStorage?._id,
+                product: productId, quantity: 1 });
+            toast.success("Thêm thành công")
+            console.log(data);
+        } catch (error) {
+            console.error('Failed to add to cart:', error);
+        }
+    }
     return (
         <>
             <div className="banner">
@@ -30,7 +53,12 @@ const Home = ({ setProduct }: Props) => {
                                 <span className="text-sm font-semibold"><p>
                                     {product.price}$</p></span>
                                 <div className="*:mx-[2px] mt-5">
-                                    <button className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Add to Cart</button>
+                                <button 
+                                        className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800" 
+                                        onClick={() => addtocart(product._id)}
+                                    >
+                                        Add to Cart
+                                    </button>
                                     <button className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Buy Now</button>
                                 </div>
                             </div>
