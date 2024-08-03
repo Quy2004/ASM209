@@ -37,7 +37,7 @@ const Detail = () => {
             toast.success("Thêm thành công")
             console.log(data);
         } catch (error) {
-            console.error('Failed to add to cart:', error);
+            console.error('Failed to add to cart:');
         }
     }
     return (
@@ -70,7 +70,7 @@ const Detail = () => {
                         </div>
                     </div>
                     {/*  */}
-                    <Button outline gradientDuoTone="cyanToBlue" className="mt-5" onClick={() => addtocart(product._id)}>
+                    <Button outline gradientDuoTone="cyanToBlue" className="mt-5" onClick={() => addtocart(detail?._id)}>
                         Add TO Cart
                     </Button>
                 </div>
