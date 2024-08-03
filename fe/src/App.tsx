@@ -18,6 +18,9 @@ import AddCate from "./pages/admin/categories/AddCate";
 import Products from "./pages/admin/products/Products";
 import AddProduct from "./pages/admin/products/Addproduct";
 import EditCate from "./pages/admin/categories/EditCate";
+import ShopAll from "./component/Layout/ShopAll";
+import EditProduct from "./pages/admin/products/Editproduct";
+import User from "./pages/admin/user/user";
 
 
 
@@ -148,7 +151,8 @@ function App() {
             <Route path="categories/editcate/:id" element={<EditCate onEdit={handleEditCate} />} />
             <Route path="products" element={<Products products={products} onDel={handleDeletePr} />} />
             <Route path="products/addproduct" element={<AddProduct onAdd={handleAddPr} />} />
-            <Route path="products/editproduct/:id" element={<Editproduct onEdit={handleEditPr}/>} />
+            <Route path="products/editproduct/:id" element={<EditProduct onEdit={handleEditPr}/>} />
+            {/* <Route path="user" element={<User/>} /> */}
           </Route>
         </Routes>
       </main >
