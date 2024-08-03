@@ -17,10 +17,17 @@ export interface IResetPasswordBody {
   confirmPassword: string;
   token: string;
 }
-
+type User_Save = {
+  id: string;
+  email: string;
+  name: string;
+  phone : string;
+  avatar : string;
+};
 export const AuthApi = {
   register: (data: IRegisterBody) => apiClient.post("/register", data),
   login: (data: ILoginBody) => apiClient.post("/login", data),
+  Save_User : (data :User_Save) => apiClient.post("/save_user", data),
   forgotPassword: (email: string) => {
     return apiClient.post("/forgot-password", { email });
   },

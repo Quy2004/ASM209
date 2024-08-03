@@ -184,8 +184,8 @@ const EditProduct = ({ onEdit }: Props) => {
                   {...register("images")}
                 />
               </div>
-              <p className='*:w-[90px] mt-[29px] *:h-[40px] ml-[-144px]  *:rounded-r-lg *:w-[144px]'>
-                <img src={`${Product?.images}`} alt="" />
+              <p className='w-[90px] mt-[29px] *:h-[40px] ml-[-144px]  *:rounded-r-lg *:w-[144px]'>
+                <img className='w-[144px ]' src={`${Product?.images}`} alt="" />
               </p>
             </div>
           </div>
