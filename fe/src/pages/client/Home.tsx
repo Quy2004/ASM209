@@ -3,6 +3,7 @@ import { IProduct } from "../../interface/IProduct"
 import { useEffect, useState } from "react"
 import { instance } from "../../instance/instance"
 import { toast } from "react-toastify"
+import { USER_INFO_STORAGE_KEY } from "../../constants"
 
 type Props = {
     setProduct: IProduct[]
@@ -10,7 +11,7 @@ type Props = {
 
 const Home = ({ setProduct }: Props) => {
     const [cart, setCart] = useState<any[]>([]);
-    const dataLocal = localStorage.getItem('W209_USER_INFO');
+    const dataLocal = localStorage.getItem(USER_INFO_STORAGE_KEY);
     const [dataLocalStorage, setDataLocalStorage] = useState('')
     useEffect(() => {
         if (dataLocal) {
@@ -19,6 +20,9 @@ const Home = ({ setProduct }: Props) => {
         }
     }, [])
     const addtocart = async (productId: string) => {
+        if (!dataLocal) {
+            return toast.info('Vui lòng đăng nhập tài khoản!');
+        }
         console.log(productId)
         try {
             const { data } = await instance.post(`cart`, {userId:dataLocalStorage?._id,
