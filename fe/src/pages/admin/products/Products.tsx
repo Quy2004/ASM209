@@ -30,9 +30,21 @@ const Products = ({ products, onDel }: Props) => {
         <>
             <div className="relative overflow-x-auto shadow-lg border-2 sm:rounded-lg mx-5">
                 <div className='py-2 mx-6 mt-6'>
-                    <Link to="addproduct" className='bg-[#38E54D] p-2 text-sm rounded-md font-medium'>Thêm Sản Phẩm</Link>
+                    <div className='flex gap-5'>
+                        <Link to="addproduct" className='bg-[#38E54D] p-2 text-sm rounded-md font-medium'>Thêm Sản Phẩm</Link>
+                        <form className="">
+                            <select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <option selected>Choose a country</option>
+                                <option value="US">United States</option>
+                                <option value="CA">Canada</option>
+                                <option value="FR">France</option>
+                                <option value="DE">Germany</option>
+                            </select>
+                        </form>
+                    </div>
                     <hr className='mt-5 bg-[#FFEA20] h-[2px]' />
                 </div>
+
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
