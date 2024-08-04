@@ -37,13 +37,14 @@ const Header = () => {
     }, [])
 
     // xoa cart-----------------------------------------------------------
+    const totalPrice = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
     const handleDelete = async (id: number | string) => {
         const confirm = window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?');
         if (confirm) {
             try {
                 // Make the DELETE request to the backend
-                 await axios.put(`http://localhost:4200/api/cart/${dataLocal}/${id}`);
-                setCart((prevCart:any) => prevCart.filter((item: any) => item._id !== id));
+                await axios.put(`http://localhost:4200/api/cart/${dataLocal}/${id}`);
+                setCart((prevCart: any) => prevCart.filter((item: any) => item._id !== id));
 
                 // Optionally, show a success message
                 toast.success("Sản phẩm đã được xóa khỏi giỏ hàng.");
@@ -230,12 +231,8 @@ const Header = () => {
                                     stroke="currentColor" className="size-6 w-[24px]">
                                     <path strokeLinecap="round" strokeLinejoin="round"
                                         d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                                </svg> 
-                                    
-                                        <span className="absolute bg-red-500 top-2 rounded-[50%] w-[16px] h-[16px] text-xs text-white">{cart?.length}</span>
-
-                                
-                                
+                                </svg>
+                                <span className="absolute bg-red-500 top-2 rounded-[50%] w-[16px] h-[16px] text-xs text-white">{cart?.length}</span>
                             </button>
                         </div>
                     </div>
@@ -245,7 +242,9 @@ const Header = () => {
             <Drawer open={isOpen} onClose={handleClose} position="right">
                 <Drawer.Header title="Cart" />
                 <Drawer.Items>
-                    {
+                   
+                   <div>
+                   {
                         cart?.map((item: any) => (
                             <div className="flex *:mx-1 my-1 items-center border-b-2 pb-2 mb-2">
                                 <div className="w-1/5">
@@ -268,8 +267,11 @@ const Header = () => {
                                     </button>
                                 </div>
                             </div>
+                           
                         ))
                     }
+                    <p className="p-6 text-left">Tổng tiền: <a className=" text-red-500" href="">{totalPrice.toLocaleString('vi-VN')} VNĐ</a></p>
+                   </div>
                     {/* <button className="border p-2 rounded-lg bg-gray-200 hover:bg-gray-400" onClick={()=>handleDelete(cat._id!)}> */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <a
