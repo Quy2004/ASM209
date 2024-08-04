@@ -238,7 +238,7 @@ const Header = () => {
                                 ) : (
                                     <>
                                         <MenuItem onClick={handleClose2}>
-                                            <Link to={"/"}>
+                                            <Link to={"/profile"}>
                                                 Profile
                                             </Link>
                                         </MenuItem>

@@ -18,10 +18,7 @@ import AddCate from "./pages/admin/categories/AddCate";
 import Products from "./pages/admin/products/Products";
 import AddProduct from "./pages/admin/products/Addproduct";
 import EditCate from "./pages/admin/categories/EditCate";
-import ShopAll from "./component/Layout/ShopAll";
-import EditProduct from "./pages/admin/products/Editproduct";
-import User from "./pages/admin/user/user";
-
+import Shop from "./pages/client/Shop";
 
 
 function App() {
@@ -58,7 +55,8 @@ function App() {
   const handleDeletePr = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete")) {
       await instance.delete(`/products/${id}`)
-
+      setProduct(products.filter((item) => item.id !== id))
+      await loadData()
       await loadPr()
       alert("delete product successfully")
     }
@@ -69,9 +67,10 @@ function App() {
     console.log(data);
     setProduct([...products, data.data])
     alert("add product successfully")
-    await loadPr()
+    await loadData()
     navigate('/admin/products')
   }
+
 
   // edit product-----------------------------------------------------
 
@@ -108,7 +107,7 @@ function App() {
   const handleDeleteCate = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete")) {
       await instance.delete(`/category/${id}`)
-      setCagtegory(categories.filter((item) => item._id !== id))
+      setCagtegory(categories.filter((item) => item.id !== id))
       await loadData()
       alert("delete category successfully")
     }
@@ -124,8 +123,8 @@ function App() {
   }
   // edit ---------------------------------------------------------------
   const handleEditCate = async (cate: ICategory) => {
-    const { data } = await instance.put(`category/${cate._id}`, cate)
-    setCagtegory(categories.map((item) => item._id == data.id ? item : data))
+    const { data } = await instance.put(`category/${cate.id}`, cate)
+    setCagtegory(categories.map((item) => item.id == data.id ? item : data))
     alert("Updated successfully")
     await loadData()
     navigate('/admin/categories')
@@ -137,8 +136,7 @@ function App() {
           <Route path="" element={<WebsiteLayout />}>
             <Route index path="" element={<Home setProduct={products} />} />
             <Route path="detail/:id" element={<Detail />} />
-            <Route path="shop" element={<ShopAll products={products} categories={categories} />} >
-            </Route>
+            <Route path="shop" element={<Shop />} />
           </Route>
           <Route path="login" element={<AuthForm isLogin />} />
           <Route path="register" element={<AuthForm />} />
@@ -151,11 +149,9 @@ function App() {
             <Route path="categories/editcate/:id" element={<EditCate onEdit={handleEditCate} />} />
             <Route path="products" element={<Products categories={categories} products={products} onDel={handleDeletePr} />} />
             <Route path="products/addproduct" element={<AddProduct onAdd={handleAddPr} />} />
-            <Route path="products/editproduct/:id" element={<EditProduct onEdit={handleEditPr}/>} />
-            {/* <Route path="user" element={<User/>} /> */}
           </Route>
         </Routes>
-      </main >
+      </main>
     </>
   );
 }

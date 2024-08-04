@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom"
 import { IProduct } from "../../interface/IProduct";
 import { instance } from "../../instance/instance";
+import { toast } from "react-toastify";
 
 
 const Detail = () => {
@@ -15,9 +16,34 @@ const Detail = () => {
         }
         fetchData()
     }, [])
+
+
+    //add to cart
+    const [cart, setCart] = useState<any[]>([]);
+    const dataLocal = localStorage.getItem('W209_USER_INFO');
+    const [dataLocalStorage, setDataLocalStorage] = useState('')
+    useEffect(() => {
+        if (dataLocal) {
+            const newData = JSON.parse(dataLocal)
+            setDataLocalStorage(newData);
+        }
+    }, [])
+    const addtocart = async (productId: string) => {
+        console.log(productId)
+        try {
+            const { data } = await instance.post(`cart`, {
+                userId: dataLocalStorage?._id,
+                product: productId, quantity: 1
+            });
+            toast.success("Thêm thành công")
+            console.log(data);
+        } catch (error) {
+            console.error('Failed to add to cart:', error);
+        }
+    }
     return (
         <>
-            <div className="flex items-center bg-gray-200 ">
+            <div className="flex items-center bg-gray-200">
                 <Link to={"/"} className="mb-1 mx-2 hover:underline">Trang chủ </Link>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-3">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
@@ -29,9 +55,9 @@ const Detail = () => {
                 <h3 className="mb-1 mx-2 hover:underline">Detail</h3>
             </div>
             {/* Detail */}
-            <main className="flex mx-auto w-[1300px] gap-2 p-4 mt-5 border rounded-xl *:mt-3">
+            <main className="flex mx-auto w-[1300px] gap-2 mt-5 border rounded-xl *:mt-3">
                 <div className="w-[45%]">
-                    <img src={`${detail?.images}`} className="rounded-lg w-[400px] h-[420px] mx-auto" alt="" />
+                    <img src={detail?.images} className="" alt="" />
                 </div>
                 <div className="w-[55%] ml-8">
                     <div className="">
@@ -45,8 +71,10 @@ const Detail = () => {
                         </div>
                     </div>
                     {/*  */}
-                    <Button outline gradientDuoTone="cyanToBlue" className="mt-5">
-                        Payment
+                    <Button outline gradientDuoTone="cyanToBlue" className="mt-5"
+                     onClick={() => addtocart(detail?._id)}
+                    >
+                        Add To Cart
                     </Button>
                 </div>
             </main>
