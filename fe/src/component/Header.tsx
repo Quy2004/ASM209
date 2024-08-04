@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import CountdownTimer from "./CountdownTimer"
-import { Drawer } from "flowbite-react";
+import { Button, Drawer, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { Menu, MenuItem } from "@mui/material";
 import { TOKEN_STORAGE_KEY, USER_INFO_STORAGE_KEY } from "../constants";
@@ -14,11 +14,19 @@ const Header = () => {
     const [product, setProduct] = useState([] as IProduct[]); // lưu dữ liệu ban đầu
     const [products, setProducts] = useState([] as IProduct[]); // lưu dữ liệu search
     const [showSearchResults, setShowSearchResults] = useState(true);
-    // const navigate = useNavigate();
+    const [cart, setCart] = useState<any>([]);
+    // Checking
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    // totalPrice
+    const totalPrice = cart.reduce((sum: any, item: any) => sum + item.product.price * item.quantity, 0)
+    // 
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
 
     // --------------------------------cart---------------
     const dataLocal = JSON.parse(localStorage.getItem('W209_USER_INFO') as string)?._id;
-    const [cart, setCart] = useState<any>([]);
     useEffect(() => {
         const fecth = async () => {
             if (dataLocal) {
@@ -44,8 +52,8 @@ const Header = () => {
         if (confirm) {
             try {
                 // Make the DELETE request to the backend
-                 await axios.put(`http://localhost:4200/api/cart/${dataLocal}/${id}`);
-                setCart((prevCart:any) => prevCart.filter((item: any) => item._id !== id));
+                await axios.put(`http://localhost:4200/api/cart/${dataLocal}/${id}`);
+                setCart((prevCart: any) => prevCart.filter((item: any) => item._id !== id));
 
                 // Optionally, show a success message
                 toast.success("Sản phẩm đã được xóa khỏi giỏ hàng.");
@@ -254,7 +262,7 @@ const Header = () => {
                                     stroke="currentColor" className="size-6 w-[24px]">
                                     <path strokeLinecap="round" strokeLinejoin="round"
                                         d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                                </svg> 
+                                </svg>
                                 <span className="absolute bg-red-500 top-2 rounded-[50%] w-[16px] h-[16px] text-xs text-white">{cart?.length}</span>
                             </button>
                         </div>
@@ -265,9 +273,9 @@ const Header = () => {
             <Drawer open={isOpen} onClose={handleClose} position="right">
                 <Drawer.Header title="Cart" />
                 <Drawer.Items>
-                {
+                    {
                         cart?.map((item: any) => (
-                            <div className="flex *:mx-1 my-1 items-center border-b-2 pb-2 mb-2">
+                            <div className="flex *:mx-1 items-center border-b-2 pb-2">
                                 <div className="w-1/5">
                                     <img src={item?.product?.images} alt="" className="border rounded-lg p-1" />
                                 </div>
@@ -284,41 +292,89 @@ const Header = () => {
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                         </svg>
-
                                     </button>
                                 </div>
                             </div>
+
                         ))
                     }
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <a
-                            href="#"
-                            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-cyan-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
-                        >
-                            Buy Now
-                        </a>
-                        <a
-                            href="#"
-                            className="inline-flex items-center rounded-lg bg-cyan-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800"
-                        >
-                            Checking&nbsp;
-                            <svg
-                                className="ms-2 h-3.5 w-3.5 rtl:rotate-180"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 14 10"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M1 5h12m0 0L9 1m4 4L9 9"
-                                />
-                            </svg>
-                        </a>
+                    <div className="py-3 mb-5 *:font-medium *:text-[17px]">
+                        <p>Tổng tiền: <i className="text-red-500"> {totalPrice.toLocaleString('vi-VN')} VNĐ</i></p>
                     </div>
+                    <div className="flex gap-2">
+                        {/* <Button className="inline-flex w-full rounded-lg px-4 text-center text-sm font-medium text-white 0 focus:outline-none focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 ">
+                            Checking
+                        </Button> */}
+                        <Button onClick={toggleModal} className="inline-flex w-full rounded-lg bg-cyan-700 px-4 text-center text-sm font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800">
+                            Thanh Toán
+                        </Button>
+                    </div>
+                    <Modal show={isModalOpen} onClose={toggleModal}>
+                        <Modal.Header>
+                            <h1 className="text-2xl">
+                                Thanh Toán
+                            </h1>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <form className="space-y-4" action="#">
+                                <div className="grid gap-4 mb-4 grid-cols-2">
+                                    <div className="col-span-2 ">
+                                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Address
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="address"
+                                            id="text"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                        />
+                                    </div>
+                                    <div className="col-span-2 sm:col-span-1">
+                                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            id="text"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                        />
+                                    </div>
+                                    <div className="col-span-2 sm:col-span-1">
+                                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Phone
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="pirce"
+                                            id="number"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-4 p-2 rounded-lg border-2 ">
+                                    <img src="../src/assets/images/shirt.png" alt="Anh san pham" className="w-[70px] h-[70px] col-span-1" />
+                                    <p className="col-span-2">T-Shirt</p>
+                                    <span><b className="col-span-1">100.000</b> VND</span>
+                                </div>
+                            </form>
+                            <div className="my-3">
+                                <p className="font-medium">Phương thức thanh toán :</p>
+                                <div className="my-1">
+                                    <input type="radio" name="default-radio" id="" />
+                                    <label htmlFor="" className="ms-2 text-gray-900 dark:text-gray-300">Thanh toán khi nhân hàng</label>
+                                </div>
+                                <div className="mb-4">
+                                    <input type="radio" name="default-radio" id="" />
+                                    <label htmlFor="" className="ms-2  text-gray-900 dark:text-gray-300">Thanh toán qua momo</label>
+                                </div>
+                            </div>
+                            <Button type="submit" fullSized>
+                                Thanh Toán
+                            </Button>
+                        </Modal.Body>
+                    </Modal>
+
                 </Drawer.Items>
             </Drawer>
         </>

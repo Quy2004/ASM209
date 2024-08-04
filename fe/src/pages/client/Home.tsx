@@ -15,7 +15,7 @@ const Home = ({ setProduct }: Props) => {
     const [dataLocalStorage, setDataLocalStorage] = useState('')
     useEffect(() => {
         if (dataLocal) {
-            const newData  = JSON.parse(dataLocal)
+            const newData = JSON.parse(dataLocal)
             setDataLocalStorage(newData);
         }
     }, [])
@@ -25,8 +25,10 @@ const Home = ({ setProduct }: Props) => {
         }
         console.log(productId)
         try {
-            const { data } = await instance.post(`cart`, {userId:dataLocalStorage?._id,
-                product: productId, quantity: 1 });
+            const { data } = await instance.post(`cart`, {
+                userId: dataLocalStorage?._id,
+                product: productId, quantity: 1
+            });
             toast.success("Thêm thành công")
             console.log(data);
         } catch (error) {
@@ -40,7 +42,7 @@ const Home = ({ setProduct }: Props) => {
             </div>
             <div>
                 <h1 className="text-center text-2xl font-semibold my-5">Sản Phẩm Hot</h1>
-                <div className="grid grid-cols-4 w-[1400px] mx-auto *:rounded-lg *:shadow-lg *:border *:mx-auto *:bg-gray-100 gap-x-[10px] gap-y-[25px] *:px-3 *:py-6">
+                <div className="grid grid-cols-4 w-[1400px] mx-auto *:rounded-lg *:shadow-lg *:border *:mx-auto  gap-x-[10px] gap-y-[25px] *:px-3 *:py-6">
                     {
                         setProduct.slice(0, 8).map((product) => (
                             <div className="*:text-center " key={product._id}>
@@ -57,8 +59,8 @@ const Home = ({ setProduct }: Props) => {
                                 <span className="text-sm font-semibold"><p>
                                     {product.price}$</p></span>
                                 <div className="*:mx-[2px] mt-5">
-                                <button 
-                                        className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800" 
+                                    <button
+                                        className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                                         onClick={() => addtocart(product._id)}
                                     >
                                         Add to Cart
