@@ -171,10 +171,8 @@ function App() {
               path="products/editproduct/:id"
               element={<EditProduct onEdit={handleEditPr} />}
             />
-            {/* <Route path="user" element={<User/>} /> */}
+            <Route path="users" element={<User />} />
           </Route>
-
-          
         </Routes>
       </main>
     </>

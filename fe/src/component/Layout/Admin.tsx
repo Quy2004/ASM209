@@ -35,7 +35,7 @@ const AdminLayout = () => {
         { name: 'Quản lí sản phẩm', link: 'products' },
         { name: 'Quản lí đơn hàng', link: '#' },
         { name: 'Quản lí bình luận', link: '#' },
-        { name: 'Quản lí tài khoản', link: '#' }
+        { name: 'Quản lí tài khoản', link: '/admin/users' }
     ];
     return (
         <>
