@@ -17,7 +17,7 @@ const Detail = () => {
     }, [])
     return (
         <>
-            <div className="flex items-center bg-gray-200">
+            <div className="flex items-center bg-gray-200 ">
                 <Link to={"/"} className="mb-1 mx-2 hover:underline">Trang chủ </Link>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-3">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
@@ -29,9 +29,9 @@ const Detail = () => {
                 <h3 className="mb-1 mx-2 hover:underline">Detail</h3>
             </div>
             {/* Detail */}
-            <main className="flex mx-auto w-[1300px] gap-2 mt-5 border rounded-xl *:mt-3">
+            <main className="flex mx-auto w-[1300px] gap-2 p-4 mt-5 border rounded-xl *:mt-3">
                 <div className="w-[45%]">
-                    <img src={`${detail?.images}`} className="" alt="" />
+                    <img src={`${detail?.images}`} className="rounded-lg w-[400px] h-[420px] mx-auto" alt="" />
                 </div>
                 <div className="w-[55%] ml-8">
                     <div className="">

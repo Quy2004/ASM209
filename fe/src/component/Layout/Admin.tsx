@@ -73,7 +73,7 @@ const AdminLayout = () => {
                                 </button>
                                 {
                                     search && showSearchResults && (
-                                        <div className="absolute bg-gray-100 w-max py-1 px-1">
+                                        <div className="absolute z-[1000] bg-gray-100 w-max py-1 px-1"> 
                                             <div className="w-auto">
                                                 {
                                                     products && products.length > 0 ? (

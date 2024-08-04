@@ -11,8 +11,6 @@ type Props = {
 const ShopAll = ({ categories, products }: Props) => {
     const [activeTab, setActiveTab] = useState('');
     const [productFilter, setProductFilter] = useState<IProduct[]>([]);
-    const [isListOpen, setIsListOpen] = useState(false);
-    const [isAsideOpen, setIsAsideOpen] = useState(true);
 
     useEffect(() => {
         setProductFilter(products)
@@ -44,7 +42,7 @@ const ShopAll = ({ categories, products }: Props) => {
                     </ul>
                 </aside>
                 <main className={`main-content flex-1 mt-4 overflow-y-auto border-l-2 px-4`}>
-                    <div className="grid grid-cols-4 *:rounded-lg *:shadow-lg *:border *:mx-auto *:bg-gray-100 gap-1 *:px-3 *:py-6">
+                    <div className="grid grid-cols-4 *:rounded-lg *:shadow-lg *:border *:mx-auto  gap-1 *:px-3 *:py-6">
                         {productFilter.map((item) => (
                             <div className="*:text-center w-[270px] h-auto mb-5" key={item._id}>
                                 <div className="relative group w-[250px] mb-2 rounded-xl place-items-center">
