@@ -49,10 +49,16 @@ const Products = ({ products, onDel }: Props) => {
                                 Giá
                             </th>
                             <th scope="col" className="px-6 py-3">
+                                Số lượng
+                            </th>
+                            <th scope="col" className="px-6 py-3">
                                 Ảnh
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Mô Tả
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Hành động
                             </th>
                         </tr>
                     </thead>
@@ -73,12 +79,9 @@ const Products = ({ products, onDel }: Props) => {
                                         {item.price}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {/* Hiển thị ảnh */}
-                                        {/* {item.images ? (
-                                            <img src={item.images.image1} className="w-24 h-24 object-cover" />
-                                        ) : (
-                                            <img src={item.images} className="w-24 h-24 object-cover" />
-                                        )} */}
+                                        {item.quality}
+                                    </td>
+                                    <td className="px-6 py-4">
                                         <img src={`${item.images}`} className="w-24 h-24 object-cover" />
 
                                     </td>

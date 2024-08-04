@@ -21,11 +21,14 @@ import ShopAll from "./component/Layout/ShopAll";
 import EditProduct from "./pages/admin/products/Editproduct";
 import User from "./pages/admin/user/user";
 import MyProfile from "./pages/client/MyProfile";
+import EditUser from "./pages/admin/user/EditUser";
+import { IUser } from "./interface/IUser";
 
 function App() {
   const navigate = useNavigate();
   const [products, setProduct] = useState<IProduct[]>([]);
   const [categories, setCagtegory] = useState<ICategory[]>([]);
+  const [users, setUsers]= useState<IUser[]>([])
 
   const loadPr = async () => {
     (async () => {
@@ -126,6 +129,23 @@ function App() {
     await loadData();
     navigate("/admin/categories");
   };
+
+  // -----------users -----------------------------------------------------
+  const handleEditUr= async(user: IUser)=>{
+    try {
+      const { data } = await instance.put(`/user/${user.id}`, user);
+      setUsers(
+        users.map((item) => (item._id === data.id ? data.data : item))
+      );
+
+      alert("Updated successfully");
+      navigate("/admin/users");
+      // await loadPr();
+    } catch (error) {
+      console.error("Error updating product:", error);
+      alert("Failed to update product");
+    }
+  }
   return (
     <>
       <main>
@@ -172,6 +192,7 @@ function App() {
               element={<EditProduct onEdit={handleEditPr} />}
             />
             <Route path="users" element={<User />} />
+            <Route path="users/editUser/:id" element={<EditUser onEditUser={handleEditUr}/>} />
           </Route>
         </Routes>
       </main>
