@@ -1,3 +1,4 @@
+
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./pages/client/Home";
 import "./App.css";
@@ -17,15 +18,13 @@ import AddCate from "./pages/admin/categories/AddCate";
 import Products from "./pages/admin/products/Products";
 import AddProduct from "./pages/admin/products/Addproduct";
 import EditCate from "./pages/admin/categories/EditCate";
-import ShopAll from "./component/Layout/ShopAll";
-import EditProduct from "./pages/admin/products/Editproduct";
-import User from "./pages/admin/user/user";
-import MyProfile from "./pages/client/MyProfile";
+import Shop from "./pages/client/Shop";
+
 
 function App() {
-  const navigate = useNavigate();
-  const [products, setProduct] = useState<IProduct[]>([]);
-  const [categories, setCagtegory] = useState<ICategory[]>([]);
+  const navigate = useNavigate()
+  const [products, setProduct] = useState<IProduct[]>([])
+  const [categories, setCagtegory] = useState<ICategory[]>([])
 
   const loadPr = async () => {
     (async () => {
@@ -44,88 +43,72 @@ function App() {
         setProduct([]);
       }
     })();
-  };
+  }
   useEffect(() => {
     const fetch = async () => {
-      loadPr();
-    };
-    fetch();
+      loadPr()
+    }
+    fetch()
   }, []);
 
   // delete product-----------------------------------------------
   const handleDeletePr = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete")) {
-      await instance.delete(`/products/${id}`);
-
-      await loadPr();
-      alert("delete product successfully");
+      await instance.delete(`/products/${id}`)
+      setProduct(products.filter((item) => item.id !== id))
+      await loadData()
+      await loadPr()
+      alert("delete product successfully")
     }
-  };
+  }
   // add product----------------------------------------------------
   const handleAddPr = async (pr: IProduct) => {
-    const { data } = await instance.post("products", pr);
+    const { data } = await instance.post('products', pr)
     console.log(data);
-    setProduct([...products, data.data]);
-    alert("add product successfully");
-    await loadPr();
-    navigate("/admin/products");
-  };
-
-  // edit product-----------------------------------------------------
-
-  const handleEditPr = async (product: IProduct) => {
-    try {
-      const { data } = await instance.put(`/products/${product.id}`, product);
-      setProduct(
-        products.map((item) => (item._id === data.data.id ? data.data : item))
-      );
-
-      alert("Updated successfully");
-      navigate("/admin/products");
-      await loadPr();
-    } catch (error) {
-      console.error("Error updating product:", error);
-      alert("Failed to update product");
-    }
-  };
+    setProduct([...products, data.data])
+    alert("add product successfully")
+    await loadData()
+    navigate('/admin/products')
+  }
 
   // categories---------------------------------------------------
   const loadData = async () => {
-    const { data } = await instance.get("/category");
-    setCagtegory(data);
-  };
+    const { data } = await instance.get("/category")
+    setCagtegory(data)
+  }
   useEffect(() => {
     const fetchData = async () => {
-      await loadData();
-    };
-    fetchData();
-  }, []);
+      await loadData()
+    }
+    fetchData()
+  }, [])
 
   // delete category-----------------------------------------------
   const handleDeleteCate = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete")) {
-      await instance.delete(`/category/${id}`);
-      setCagtegory(categories.filter((item) => item._id !== id));
-      await loadData();
-      alert("delete category successfully");
+      await instance.delete(`/category/${id}`)
+      setCagtegory(categories.filter((item) => item.id !== id))
+      await loadData()
+      alert("delete category successfully")
     }
-  };
+  }
   // add category---------------------------------------------------
   const handleAddCate = async (cate: ICategory) => {
-    const { data } = await instance.post("category", cate);
-    setCagtegory([...categories, data]);
-    alert("add category successfully");
-    await loadData();
-    navigate("/admin/categories");
-  };
+    const { data } = await instance.post('category', cate)
+    setCagtegory([...categories, data])
+    alert("add category successfully")
+    await loadData()
+    navigate('/admin/categories')
+
+  }
   // edit ---------------------------------------------------------------
   const handleEditCate = async (cate: ICategory) => {
-    const { data } = await instance.put(`category/${cate._id}`, cate);
-    setCagtegory(categories.map((item) => (item._id == data.id ? item : data)));
-    alert("Updated successfully");
-    await loadData();
-    navigate("/admin/categories");
-  };
+    const { data } = await instance.put(`category/${cate.id}`, cate)
+    setCagtegory(categories.map((item) => item.id == data.id ? item : data))
+    alert("Updated successfully")
+    await loadData()
+    navigate('/admin/categories')
+  }
   return (
     <>
       <main>
@@ -133,11 +116,7 @@ function App() {
           <Route path="" element={<WebsiteLayout />}>
             <Route index path="" element={<Home setProduct={products} />} />
             <Route path="detail/:id" element={<Detail />} />
-            <Route
-              path="shop"
-              element={<ShopAll products={products} categories={categories} />}
-            ></Route>
-            <Route path="/profile" element={<MyProfile />} />
+            <Route path="shop" element={<Shop />} />
           </Route>
           <Route path="login" element={<AuthForm isLogin />} />
           <Route path="register" element={<AuthForm />} />
@@ -145,33 +124,11 @@ function App() {
           <Route path="reset-password" element={<ResetPassword />} />
           <Route path="admin" element={<AdminLayout />}>
             <Route index path="" element={<Dashboard />} />
-            <Route
-              path="categories"
-              element={
-                <Categories categoris={categories} onDel={handleDeleteCate} />
-              }
-            />
-            <Route
-              path="categories/addcate"
-              element={<AddCate onAdd={handleAddCate} />}
-            />
-            <Route
-              path="categories/editcate/:id"
-              element={<EditCate onEdit={handleEditCate} />}
-            />
-            <Route
-              path="products"
-              element={<Products products={products} onDel={handleDeletePr} />}
-            />
-            <Route
-              path="products/addproduct"
-              element={<AddProduct onAdd={handleAddPr} />}
-            />
-            <Route
-              path="products/editproduct/:id"
-              element={<EditProduct onEdit={handleEditPr} />}
-            />
-            <Route path="users" element={<User />} />
+            <Route path="categories" element={<Categories categoris={categories} onDel={handleDeleteCate} />} />
+            <Route path="categories/addcate" element={<AddCate onAdd={handleAddCate} />} />
+            <Route path="categories/editcate/:id" element={<EditCate onEdit={handleEditCate} />} />
+            <Route path="products" element={<Products products={products} onDel={handleDeletePr} />} />
+            <Route path="products/addproduct" element={<AddProduct onAdd={handleAddPr} />} />
           </Route>
         </Routes>
       </main>
