@@ -3,6 +3,7 @@ import { IProduct } from "../../interface/IProduct"
 import { useEffect, useState } from "react"
 import { instance } from "../../instance/instance"
 import { toast } from "react-toastify"
+import { Carousel } from "flowbite-react"
 
 type Props = {
     setProduct: IProduct[]
@@ -31,10 +32,25 @@ const Home = ({ setProduct }: Props) => {
             console.error('Failed to add to cart:', error);
         }
     }
+    // 
+    const slides = [
+        './src/assets/images/banner.jpeg',
+        './src/assets/images/banner2.jpg',
+        './src/assets/images/banner3.jpg'
+    ];
     return (
         <>
-            <div className="banner">
-                <img src="./src/assets/images/banner.jpeg" className="w-full" alt="" />
+            <div className="w-full h-[500px] mt-5 bg-gray-300 py-2">
+                <Carousel>
+                    {slides.map((slide, index) => (
+                        <img
+                            key={index}
+                            src={slide}
+                            alt={`Slide ${index + 1}`}
+                            className="w-full h-full object-cover"
+                        />
+                    ))}
+                </Carousel>
             </div>
             <div>
                 <h1 className="text-center text-2xl font-semibold my-5">Sản Phẩm Hot</h1>

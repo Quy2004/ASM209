@@ -77,7 +77,7 @@ function App() {
 
     const handleEditPr = async (product: IProduct) => {
       try {
-        const { data } = await instance.put(`/products/${product.id}`, product);
+        const { data } = await instance.put(`/products/${product._id}`, product);
         setProduct(products.map((item) =>
             item._id === data.data.id ? data.data : item
         ));
@@ -149,7 +149,7 @@ function App() {
             <Route path="categories" element={<Categories categoris={categories} onDel={handleDeleteCate} />} />
             <Route path="categories/addcate" element={<AddCate onAdd={handleAddCate} />} />
             <Route path="categories/editcate/:id" element={<EditCate onEdit={handleEditCate} />} />
-            <Route path="products" element={<Products products={products} onDel={handleDeletePr} />} />
+            <Route path="products" element={<Products categories={categories} products={products} onDel={handleDeletePr} />} />
             <Route path="products/addproduct" element={<AddProduct onAdd={handleAddPr} />} />
             <Route path="products/editproduct/:id" element={<EditProduct onEdit={handleEditPr}/>} />
             {/* <Route path="user" element={<User/>} /> */}

@@ -23,8 +23,6 @@ const Header = () => {
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
-
-
     // --------------------------------cart---------------
     const dataLocal = JSON.parse(localStorage.getItem('W209_USER_INFO') as string)?._id;
     useEffect(() => {
@@ -38,7 +36,6 @@ const Header = () => {
         fecth()
     }, [])
     // console.log(cart)
-
     useEffect(() => {
         (async () => {
             const { data } = await axios.get(`http://localhost:4200/api/products`)
@@ -70,8 +67,6 @@ const Header = () => {
         productSearch = productSearch.filter(pro => pro.name.toUpperCase().includes(search.toUpperCase()))
         setProducts(productSearch)
     }, [search])
-
-
 
     useEffect(() => {
         (async () => {
@@ -115,6 +110,7 @@ const Header = () => {
         localStorage.removeItem(USER_INFO_STORAGE_KEY);
         window.location.href = "/";
     };
+    
     return (
         <>
             <header>
