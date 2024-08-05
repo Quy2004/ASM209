@@ -86,7 +86,7 @@ const UserManagement = () => {
     <>
       <div className="relative overflow-x-auto shadow-lg border-2 sm:rounded-lg mx-5">
       <div className='py-2 mx-6 mt-6'>
-                    <Link to="addUser" className='bg-[#38E54D] p-2 text-sm rounded-md font-medium'>Thêm Sản Phẩm</Link>
+                    {/* <Link to="addUser" className='bg-[#38E54D] p-2 text-sm rounded-md font-medium'>Thêm Sản Phẩm</Link> */}
                     <hr className='mt-5 bg-[#FFEA20] h-[2px]' />
                 </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
