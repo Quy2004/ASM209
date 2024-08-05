@@ -87,6 +87,8 @@ const Header = () => {
     //     fecth()
     // }, [])
     const onSubmit = async (data: IOder) => {
+        const totalPrice = cart.reduce((sum: any, item: any) => sum + item.product.price * item.quantity, 0);
+    
         console.log("order", data);
         try {
             await instance.post('/Oder', {
@@ -95,6 +97,7 @@ const Header = () => {
                 address: data.address,
                 phone: data.phone,
                 status: "1",
+                total: totalPrice,
                 products: cart.map((item: any) => ({
                     productId: item.product._id,
                     quantity: item.quantity,
@@ -104,12 +107,13 @@ const Header = () => {
                 }))
             });
             setoder([...oder, data]);
-            toast.success  ("Đặt hàng thành công");
+            toast.success("Đặt hàng thành công");
         } catch (error) {
             console.error('Failed to create order:', error);
             toast.error("Có lỗi xảy ra khi đặt hàng. " + error);
         }
     };
+    
     
 
 

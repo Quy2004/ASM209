@@ -33,7 +33,7 @@ const AdminLayout = () => {
         { name: 'Dashboard', link: '/admin' },
         { name: 'Quản lí danh mục', link: 'categories' },
         { name: 'Quản lí sản phẩm', link: 'products' },
-        { name: 'Quản lí đơn hàng', link: '#' },
+        { name: 'Quản lí đơn hàng', link: 'carts' },
         { name: 'Quản lí bình luận', link: '#' },
         { name: 'Quản lí tài khoản', link: '/admin/users' }
     ];

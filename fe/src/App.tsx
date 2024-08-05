@@ -23,6 +23,7 @@ import User from "./pages/admin/user/user";
 import MyProfile from "./pages/client/MyProfile";
 import EditUser from "./pages/admin/user/EditUser";
 import { IUser } from "./interface/IUser";
+import Carts from "./pages/admin/carts/Carts";
 
 function App() {
   const navigate = useNavigate();
@@ -193,6 +194,7 @@ function App() {
             />
             <Route path="users" element={<User />} />
             <Route path="users/editUser/:id" element={<EditUser onEditUser={handleEditUr}/>} />
+            <Route path="carts" element={<Carts />} />
           </Route>
         </Routes>
       </main>
