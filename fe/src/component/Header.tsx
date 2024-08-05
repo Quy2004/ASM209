@@ -8,13 +8,26 @@ import { IProduct } from "../interface/IProduct";
 import { instance } from "../instance/instance";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import { IOder } from "../interface/Oder";
 
 const Header = () => {
     const [search, setSearch] = useState('');
     const [product, setProduct] = useState([] as IProduct[]); // lưu dữ liệu ban đầu
     const [products, setProducts] = useState([] as IProduct[]); // lưu dữ liệu search
+    const [oder, setoder] = useState<IOder[]>([])
+    const { register, handleSubmit, formState: { errors } } = useForm<IOder>()
     const [showSearchResults, setShowSearchResults] = useState(true);
     const [cart, setCart] = useState<any>([]);
+    
+    const [dataLocalStorage, setDataLocalStorage] = useState('')
+    useEffect(() => {
+        const dataLocal = localStorage.getItem(USER_INFO_STORAGE_KEY);
+        if (dataLocal) {
+            const newData = JSON.parse(dataLocal)
+            setDataLocalStorage(newData);
+        }
+    }, [])
     // Checking
     const [isModalOpen, setIsModalOpen] = useState(false);
     // totalPrice
@@ -23,6 +36,8 @@ const Header = () => {
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
+
+
     // --------------------------------cart---------------
     const dataLocal = JSON.parse(localStorage.getItem('W209_USER_INFO') as string)?._id;
     useEffect(() => {
@@ -36,6 +51,7 @@ const Header = () => {
         fecth()
     }, [])
     // console.log(cart)
+
     useEffect(() => {
         (async () => {
             const { data } = await axios.get(`http://localhost:4200/api/products`)
@@ -62,11 +78,48 @@ const Header = () => {
         }
     };
 
+    //---------------------------------Thanh Toán
+    // useEffect(() => {
+    //     const fecth = async () => {
+    //         const { data } = await instance.get(`/Oder`)
+    //         console.log(data)
+    //     }
+    //     fecth()
+    // }, [])
+    const onSubmit = async (data: IOder) => {
+        console.log("order", data);
+        try {
+            await instance.post('/Oder', {
+                userId: dataLocalStorage?._id,
+                name: data.name,
+                address: data.address,
+                phone: data.phone,
+                status: "1",
+                products: cart.map((item: any) => ({
+                    productId: item.product._id,
+                    quantity: item.quantity,
+                    name: item.product.name,
+                    price: item.product.price,
+                    image: item.product.images,
+                }))
+            });
+            setoder([...oder, data]);
+            toast.success  ("Đặt hàng thành công");
+        } catch (error) {
+            console.error('Failed to create order:', error);
+            toast.error("Có lỗi xảy ra khi đặt hàng. " + error);
+        }
+    };
+    
+
+
     useEffect(() => {
         let productSearch = [...product]
         productSearch = productSearch.filter(pro => pro.name.toUpperCase().includes(search.toUpperCase()))
         setProducts(productSearch)
     }, [search])
+
+
 
     useEffect(() => {
         (async () => {
@@ -110,7 +163,6 @@ const Header = () => {
         localStorage.removeItem(USER_INFO_STORAGE_KEY);
         window.location.href = "/";
     };
-    
     return (
         <>
             <header>
@@ -305,6 +357,8 @@ const Header = () => {
                             Thanh Toán
                         </Button>
                     </div>
+
+                    {/* modale thanh toan ---------------------------------------------------------------------- */}
                     <Modal show={isModalOpen} onClose={toggleModal}>
                         <Modal.Header>
                             <h1 className="text-2xl">
@@ -312,62 +366,75 @@ const Header = () => {
                             </h1>
                         </Modal.Header>
                         <Modal.Body>
-                            <form className="space-y-4" action="#">
-                                <div className="grid gap-4 mb-4 grid-cols-2">
-                                    <div className="col-span-2 ">
-                                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Address
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="address"
-                                            id="text"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        />
+                            <div>
+
+                                <form className="space-y-4" action="#" onSubmit={handleSubmit(onSubmit)}>
+                                    <div className="grid gap-4 mb-4 grid-cols-2">
+                                        <div className="col-span-2 ">
+                                            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                Address
+                                            </label>
+                                            <input
+                                                {...register('address')}
+                                                type="text"
+                                                name="address"
+                                                id="text"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            />
+                                        </div>
+                                        <div className="col-span-2 sm:col-span-1">
+                                            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                Name
+                                            </label>
+                                            <input
+                                                {...register('name')}
+                                                type="text"
+                                                name="name"
+                                                id="text"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            />
+                                        </div>
+                                        <div className="col-span-2 sm:col-span-1">
+                                            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                phone
+                                            </label>
+                                            <input
+                                                {...register('phone')}
+                                                type="text"
+                                                name="phone"
+                                                id="text"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            />
+                                        </div>
+                                        
                                     </div>
-                                    <div className="col-span-2 sm:col-span-1">
-                                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            id="text"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        />
+                                    {cart?.map((item: any) => (
+                                        <div className="grid grid-cols-4 p-2 rounded-lg border-2 ">
+                                            <img src={item?.product?.images} alt="Anh san pham"  className="w-[70px] h-[70px] col-span-1 rounded-md" />
+                                            <p className="col-span-2">{item?.product?.name}</p>
+                                            <span><b className="col-span-1">{item?.product?.price * item?.quantity}</b> VND</span>
+                                        </div>
+                                    ))}
+                                    <div className="py-3 mb-5 *:font-medium *:text-[17px]">
+                                        <p>Tổng tiền: <i className="text-red-500"> {totalPrice.toLocaleString('vi-VN')} VNĐ</i></p>
                                     </div>
-                                    <div className="col-span-2 sm:col-span-1">
-                                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Phone
-                                        </label>
-                                        <input
-                                            type="number"
-                                            name="pirce"
-                                            id="number"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        />
+
+                                    <div className="my-3">
+                                        <p className="font-medium">Phương thức thanh toán :</p>
+                                        <div className="my-1">
+                                            <input type="radio" name="default-radio" id="" />
+                                            <label htmlFor="" className="ms-2 text-gray-900 dark:text-gray-300">Thanh toán khi nhân hàng</label>
+                                        </div>
+                                        <div className="mb-4">
+                                            <input type="radio" name="default-radio" id="" />
+                                            <label htmlFor="" className="ms-2  text-gray-900 dark:text-gray-300">Thanh toán qua momo</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="grid grid-cols-4 p-2 rounded-lg border-2 ">
-                                    <img src="../src/assets/images/shirt.png" alt="Anh san pham" className="w-[70px] h-[70px] col-span-1" />
-                                    <p className="col-span-2">T-Shirt</p>
-                                    <span><b className="col-span-1">100.000</b> VND</span>
-                                </div>
-                            </form>
-                            <div className="my-3">
-                                <p className="font-medium">Phương thức thanh toán :</p>
-                                <div className="my-1">
-                                    <input type="radio" name="default-radio" id="" />
-                                    <label htmlFor="" className="ms-2 text-gray-900 dark:text-gray-300">Thanh toán khi nhân hàng</label>
-                                </div>
-                                <div className="mb-4">
-                                    <input type="radio" name="default-radio" id="" />
-                                    <label htmlFor="" className="ms-2  text-gray-900 dark:text-gray-300">Thanh toán qua momo</label>
-                                </div>
+                                    <Button type="submit" fullSized>
+                                        Thanh Toán
+                                    </Button>
+                                </form>
                             </div>
-                            <Button type="submit" fullSized>
-                                Thanh Toán
-                            </Button>
                         </Modal.Body>
                     </Modal>
 

@@ -20,6 +20,7 @@ const Home = ({ setProduct }: Props) => {
             setDataLocalStorage(newData);
         }
     }, [])
+    
     const addtocart = async (productId: string) => {
         if (!dataLocal) {
             return toast.info('Vui lòng đăng nhập tài khoản!');
