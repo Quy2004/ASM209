@@ -3,7 +3,8 @@ import { IProduct } from "../../interface/IProduct"
 import { useEffect, useState } from "react"
 import { instance } from "../../instance/instance"
 import { toast } from "react-toastify"
-
+import { USER_INFO_STORAGE_KEY } from "../../constants"
+import { Carousel } from "flowbite-react"
 
 type Props = {
     setProduct: IProduct[]
