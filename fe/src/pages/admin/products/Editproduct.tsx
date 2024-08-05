@@ -1,12 +1,12 @@
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { IProduct } from '../../../interface/IProduct';
 import { useParams } from 'react-router-dom';
+import UploadCoudiary from '../../../component/utils/Cloudiary';
 import { instance } from '../../../instance/instance';
 import { ICategory } from '../../../interface/ICategory';
-import UploadCoudiary from '../../../component/utils/Cloudiary';
+import { IProduct } from '../../../interface/IProduct';
 
 type Props = {
   onEdit: (product: IProduct) => void;
@@ -18,6 +18,7 @@ const productSchema = Joi.object({
   desc: Joi.string().optional(),
   images: Joi.any().optional(),
   categoryId: Joi.string().required(),
+  quality: Joi.number().min(1),
 });
 
 const EditProduct = ({ onEdit }: Props) => {
@@ -50,6 +51,7 @@ const EditProduct = ({ onEdit }: Props) => {
         price: data.price,
         desc: data.desc,
         images: data.images,
+        quality: data.quality,
         categoryId: data.categoryId,
       });
       setProduct(data)
@@ -148,6 +150,25 @@ const EditProduct = ({ onEdit }: Props) => {
                 {...register("desc")}
               />
             </div>
+            <div className="mb-5 w-[250px] mr-5">
+              <label
+                htmlFor="desc"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Số lượng
+              </label>
+              <input
+                type="number"
+                id="quality"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                {...register("quality", {required:true})}
+              />
+              {errors.quality && (
+                <p className="text-red-500">
+                  Không được để trống, và không được âm
+                </p>
+              )}
+            </div>
             <div className="mb-5 w-[250px]">
               <label
                 htmlFor="categoryId"
@@ -184,14 +205,19 @@ const EditProduct = ({ onEdit }: Props) => {
                   {...register("images")}
                 />
               </div>
-              <p className='w-[90px] mt-[29px] *:h-[40px] ml-[-144px]  *:rounded-r-lg *:w-[144px]'>
-                <img className='w-[144px ]' src={`${Product?.images}`} alt="" />
+          
+            </div>
+            
+          </div>
+          <div>
+            <h1 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>Image</h1>
+            <p className=''>
+                <img className='w-[144px] rounded-md border border-black' src={`${Product?.images}`} alt="" />
               </p>
             </div>
-          </div>
           <button
             type="submit"
-            className="text-white bg-blue-700 mb-2 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white mt-[15px] bg-blue-700 mb-2 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Sửa
           </button>

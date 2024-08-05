@@ -42,9 +42,9 @@ const AuthForm = ({ isLogin }: Props) => {
       reset();
       navigate("/login");
     } catch (error: any) {
-    //   toast.error(
-    //     error?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
-    //   );
+      //   toast.error(
+      //     error?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+      //   );
     }
   };
 
@@ -54,15 +54,15 @@ const AuthForm = ({ isLogin }: Props) => {
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
       localStorage.setItem(USER_INFO_STORAGE_KEY, JSON.stringify(data.user));
 
-      if (data.user.role === "ADMIN") {
+      if (data.user.role === 1) {
         window.location.href = "/admin";
       } else {
         window.location.href = "/";
       }
     } catch (error: any) {
-    //   toast.error(
-    //     error?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
-    //   );
+      //   toast.error(
+      //     error?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+      //   );
     }
   };
 

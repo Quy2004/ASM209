@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom"
 import { IProduct } from "../../interface/IProduct";
 import { instance } from "../../instance/instance";
+import { toast } from "react-toastify";
+import { USER_INFO_STORAGE_KEY } from "../../constants";
 
 
 const Detail = () => {
@@ -15,6 +17,33 @@ const Detail = () => {
         }
         fetchData()
     }, [])
+
+    //add to cart
+    const [cart, setCart] = useState<any[]>([]);
+    const dataLocal = localStorage.getItem(USER_INFO_STORAGE_KEY);
+    const [dataLocalStorage, setDataLocalStorage] = useState('')
+    useEffect(() => {
+        if (dataLocal) {
+            const newData = JSON.parse(dataLocal)
+            setDataLocalStorage(newData);
+        }
+    }, [])
+    const addtocart = async (productId: string) => {
+        if (!dataLocal) {
+            return toast.info('Vui lòng đăng nhập tài khoản!');
+        }
+        console.log(productId)
+        try {
+            const { data } = await instance.post(`cart`, {
+                userId: dataLocalStorage?._id,
+                product: productId, quantity: 1
+            });
+            toast.success("Thêm thành công")
+            console.log(data);
+        } catch (error) {
+            console.error('Failed to add to cart:');
+        }
+    }
     return (
         <>
             <div className="flex items-center bg-gray-200 ">
@@ -40,13 +69,13 @@ const Detail = () => {
                         <div className="mt-3">
                             <p className="font-medium">Mô tả sản phẩm: </p>
                             <p>
-                               {detail?.desc}
+                                {detail?.desc}
                             </p>
                         </div>
                     </div>
                     {/*  */}
-                    <Button outline gradientDuoTone="cyanToBlue" className="mt-5">
-                        Payment
+                    <Button outline gradientDuoTone="cyanToBlue" className="mt-5" onClick={() => addtocart(detail?._id)}>
+                        Add TO Cart
                     </Button>
                 </div>
             </main>

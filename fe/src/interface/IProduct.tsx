@@ -7,4 +7,5 @@ export interface IProduct {
     price: number;
     desc?: string; 
     categoryId: number | string;
+    quality: number,
 }

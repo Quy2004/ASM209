@@ -17,6 +17,7 @@ const productSchema = Joi.object({
   desc: Joi.string().optional(),
   images: Joi.any().optional(),
   categoryId: Joi.string().required(),
+  quality: Joi.number().min(1),
 });
 
 const AddProduct = ({ onAdd }: Props) => {
@@ -133,6 +134,25 @@ const AddProduct = ({ onAdd }: Props) => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 {...register("desc")}
               />
+            </div>
+            <div className="mb-5 w-[250px] mr-5">
+              <label
+                htmlFor="desc"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Số lượng
+              </label>
+              <input
+                type="number"
+                id="quality"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                {...register("quality", {required:true})}
+              />
+              {errors.quality && (
+                <p className="text-red-500">
+                  Không được để trống, và không được âm
+                </p>
+              )}
             </div>
             <div className="mb-5 w-[250px]">
               <label
