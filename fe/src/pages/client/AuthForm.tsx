@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AuthApi, ILoginBody, IRegisterBody } from "../../api/authApi";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { TOKEN_STORAGE_KEY, USER_INFO_STORAGE_KEY } from "../../constants";
 
 type Props = {
@@ -38,13 +38,13 @@ const AuthForm = ({ isLogin }: Props) => {
   const registerAccount = async (data: IRegisterBody) => {
     try {
       await AuthApi.register(data);
-    //   toast.success("Đăng ký thành công");
+      toast.success("Đăng ký thành công");
       reset();
       navigate("/login");
     } catch (error: any) {
-    //   toast.error(
-    //     error?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
-    //   );
+      //   toast.error(
+      //     error?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+      //   );
     }
   };
 
@@ -54,15 +54,15 @@ const AuthForm = ({ isLogin }: Props) => {
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
       localStorage.setItem(USER_INFO_STORAGE_KEY, JSON.stringify(data.user));
 
-      if (data.user.role === "ADMIN") {
+      if (data.user.role === 1) {
         window.location.href = "/admin";
       } else {
         window.location.href = "/";
       }
     } catch (error: any) {
-    //   toast.error(
-    //     error?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
-    //   );
+      //   toast.error(
+      //     error?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+      //   );
     }
   };
 
@@ -93,7 +93,7 @@ const AuthForm = ({ isLogin }: Props) => {
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
-              stroke="currentColor"
+stroke="currentColor"
               className="size-5"
             >
               <path
@@ -172,7 +172,7 @@ const AuthForm = ({ isLogin }: Props) => {
                     })}
                     id=""
                     placeholder="Password"
-                    className="bg-gray-100 border-l-4 border-[#00A9FF] w-full py-2 pl-3 outline-none"
+className="bg-gray-100 border-l-4 border-[#00A9FF] w-full py-2 pl-3 outline-none"
                   />
                 </div>
 
@@ -253,7 +253,7 @@ const AuthForm = ({ isLogin }: Props) => {
                   LOGIN
                 </button>
               </>
-            )}
+)}
           </form>
         </div>
       </div>

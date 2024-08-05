@@ -8,11 +8,15 @@ import { IProduct } from "../interface/IProduct";
 import { instance } from "../instance/instance";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+ 
 
 const Header = () => {
     const [search, setSearch] = useState('');
     const [product, setProduct] = useState([] as IProduct[]); // lưu dữ liệu ban đầu
     const [products, setProducts] = useState([] as IProduct[]); // lưu dữ liệu search
+    const [oder, setoder]= useState<any>([])
+    const {register , handleSubmit , formState:{errors}} = useForm<any>()
     const [showSearchResults, setShowSearchResults] = useState(true);
     const [cart, setCart] = useState<any>([]);
     // Checking
@@ -65,12 +69,29 @@ const Header = () => {
         }
     };
 
+    //Thanh Toán
+    useEffect(() => {
+        const fecth = async () => {
+            if (dataLocal) {
+                const { data } = await instance.get(`/oders`)
+                console.log(data)
+            }
+        }
+        fecth()
+    }, [])
+    const onSubmit = async (data : any)=>{
+        console.log(data)
+        await instance.post('/oders', data)
+        setoder([...oder, data])
+        
+    }
+
+
     useEffect(() => {
         let productSearch = [...product]
         productSearch = productSearch.filter(pro => pro.name.toUpperCase().includes(search.toUpperCase()))
         setProducts(productSearch)
     }, [search])
-
 
 
     useEffect(() => {
@@ -316,13 +337,18 @@ const Header = () => {
                             </h1>
                         </Modal.Header>
                         <Modal.Body>
-                            <form className="space-y-4" action="#">
+                            <div>
+                               
+                            <form className="space-y-4" action="#" onSubmit={handleSubmit(onSubmit)}>
                                 <div className="grid gap-4 mb-4 grid-cols-2">
                                     <div className="col-span-2 ">
                                         <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Address
                                         </label>
                                         <input
+                                        {...register('address',{
+                                            required: true,
+                                        })}
                                             type="text"
                                             name="address"
                                             id="text"
@@ -334,6 +360,9 @@ const Header = () => {
                                             Name
                                         </label>
                                         <input
+                                        {...register('name',{
+                                            required: true,
+                                        })}
                                             type="text"
                                             name="name"
                                             id="text"
@@ -345,6 +374,9 @@ const Header = () => {
                                             Phone
                                         </label>
                                         <input
+                                         {...register('phone',{
+                                            required: true,
+                                        })}
                                             type="number"
                                             name="pirce"
                                             id="number"
@@ -352,12 +384,14 @@ const Header = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-4 p-2 rounded-lg border-2 ">
-                                    <img src="../src/assets/images/shirt.png" alt="Anh san pham" className="w-[70px] h-[70px] col-span-1" />
-                                    <p className="col-span-2">T-Shirt</p>
-                                    <span><b className="col-span-1">100.000</b> VND</span>
-                                </div>
-                            </form>
+                               { cart?.map((item :any)=>(
+                                 <div className="grid grid-cols-4 p-2 rounded-lg border-2 ">
+                                 <img src={item?.product?.images} alt="Anh san pham" className="w-[70px] h-[70px] col-span-1 rounded-md" />
+                                 <p className="col-span-2">{item?.product?.name}</p>
+                                 <span><b className="col-span-1">{item?.product?.price * item?.quantity}</b> VND</span>
+                             </div>
+                              )) }
+                           
                             <div className="my-3">
                                 <p className="font-medium">Phương thức thanh toán :</p>
                                 <div className="my-1">
@@ -372,6 +406,8 @@ const Header = () => {
                             <Button type="submit" fullSized>
                                 Thanh Toán
                             </Button>
+                            </form>
+                            </div>
                         </Modal.Body>
                     </Modal>
 

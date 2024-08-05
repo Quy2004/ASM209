@@ -23,11 +23,10 @@ const userSchema = new Schema(
     avatar: {
       type: String,
       default: null,
-    },
+    },  
     role: {
-      type: String,
-      enum: ["ADMIN", "USER"],
-      default: "USER",
+      type: Number,
+      default: 0,
     },
     passwordResetToken: {
       type: String,
