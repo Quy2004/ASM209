@@ -76,21 +76,6 @@ function App() {
 
   // edit product-----------------------------------------------------
 
-  const handleEditPr = async (product: IProduct) => {
-    try {
-      const { data } = await instance.put(`/products/${product.id}`, product);
-      setProduct(
-        products.map((item) => (item._id === data.data.id ? data.data : item))
-      );
-
-      alert("Updated successfully");
-      navigate("/admin/products");
-      await loadPr();
-    } catch (error) {
-      console.error("Error updating product:", error);
-      alert("Failed to update product");
-    }
-  };
 
   // categories---------------------------------------------------
   const loadData = async () => {
@@ -165,39 +150,4 @@ function App() {
           <Route path="reset-password" element={<ResetPassword />} />
           <Route path="admin" element={<AdminLayout />}>
             <Route index path="" element={<Dashboard />} />
-            <Route
-              path="categories"
-              element={
-                <Categories categoris={categories} onDel={handleDeleteCate} />
-              }
-            />
-            <Route
-              path="categories/addcate"
-              element={<AddCate onAdd={handleAddCate} />}
-            />
-            <Route
-              path="categories/editcate/:id"
-              element={<EditCate onEdit={handleEditCate} />}
-            />
-            <Route
-              path="products"
-              element={<Products products={products} onDel={handleDeletePr} />}
-            />
-            <Route
-              path="products/addproduct"
-              element={<AddProduct onAdd={handleAddPr} />}
-            />
-            <Route
-              path="products/editproduct/:id"
-              element={<EditProduct onEdit={handleEditPr} />}
-            />
-            <Route path="users" element={<User />} />
-            <Route path="users/editUser/:id" element={<EditUser onEditUser={handleEditUr}/>} />
-          </Route>
-        </Routes>
-      </main>
-    </>
-  );
-}
 
-export default App;

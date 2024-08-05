@@ -49,7 +49,7 @@ const AddProduct = ({ onAdd }: Props) => {
 
   return (
     <div className="relative overflow-x-auto shadow-lg border-2 sm:rounded-lg mx-5">
-      <div className="mx-6 mt-6">
+      <div className="py-2 mx-6 mt-6">
         <h1 className="p-2 text-sm rounded-md font-medium">Thêm Sản Phẩm</h1>
         <hr className="mt-4 bg-[#FFEA20] h-[2px]" />
       </div>
