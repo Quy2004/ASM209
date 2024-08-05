@@ -16,7 +16,7 @@ const Header = () => {
     const [product, setProduct] = useState([] as IProduct[]); // lưu dữ liệu ban đầu
     const [products, setProducts] = useState([] as IProduct[]); // lưu dữ liệu search
     const [oder, setoder] = useState<IOder[]>([])
-    const { register, handleSubmit, formState: { errors } } = useForm<IOder>()
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<IOder>()
     const [showSearchResults, setShowSearchResults] = useState(true);
     const [cart, setCart] = useState<any>([]);
     
@@ -25,6 +25,10 @@ const Header = () => {
         const dataLocal = localStorage.getItem(USER_INFO_STORAGE_KEY);
         if (dataLocal) {
             const newData = JSON.parse(dataLocal)
+            reset({
+                name: newData.name,
+                phone: newData.phone,
+            })
             setDataLocalStorage(newData);
         }
     }, [])
@@ -296,6 +300,11 @@ const Header = () => {
                                         <MenuItem onClick={handleClose2}>
                                             <Link to={"/profile"}>
                                                 Profile
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem onClick={handleClose2}>
+                                            <Link to={"/myoder"}>
+                                                My Order
                                             </Link>
                                         </MenuItem>
                                         <MenuItem onClick={handleClose2}>

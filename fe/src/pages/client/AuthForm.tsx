@@ -55,9 +55,11 @@ const AuthForm = ({ isLogin }: Props) => {
       localStorage.setItem(USER_INFO_STORAGE_KEY, JSON.stringify(data.user));
 
       if (data.user.role === 1) {
-        window.location.href = "/admin";
+       navigate("/admin");
+       toast.success("Đăng nhập vào admin thành công");
       } else {
-        window.location.href = "/";
+       navigate("/");
+       toast.success("Đăng nhập thành công");
       }
     } catch (error: any) {
       //   toast.error(

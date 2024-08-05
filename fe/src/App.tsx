@@ -24,6 +24,7 @@ import MyProfile from "./pages/client/MyProfile";
 import EditUser from "./pages/admin/user/EditUser";
 import { IUser } from "./interface/IUser";
 import Carts from "./pages/admin/carts/Carts";
+import MyOrder from "./pages/client/MyOrder";
 
 function App() {
   const navigate = useNavigate();
@@ -124,7 +125,7 @@ function App() {
   };
   // edit ---------------------------------------------------------------
   const handleEditCate = async (cate: ICategory) => {
-    const { data } = await instance.put(`category/${cate._id}`, cate);
+    const { data } = await instance.put(`category/${cate.id}`, cate);
     setCagtegory(categories.map((item) => (item._id == data.id ? item : data)));
     alert("Updated successfully");
     await loadData();
@@ -154,6 +155,7 @@ function App() {
           <Route path="" element={<WebsiteLayout />}>
             <Route index path="" element={<Home setProduct={products} />} />
             <Route path="detail/:id" element={<Detail />} />
+            <Route path="myoder" element={<MyOrder />} />
             <Route
               path="shop"
               element={<ShopAll products={products} categories={categories} />}
