@@ -8,6 +8,7 @@ import routerCategory from './router/categorys.js';
 import authRouter from './router/auth.js';
 import routerUser from './router/user.js';
 import RouterCart from './router/Cart.js';
+import routeroder from './router/Oder.js';
 
 // Đoạn mã để lấy __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,7 @@ app.use('/api', routerCategory);
 app.use('/api', authRouter);
 app.use('/api', routerUser);
 app.use("/api",RouterCart );
+app.use("/api",routeroder );
 
 // Khởi động server
 app.listen(port, async () => {
