@@ -36,7 +36,7 @@ const MyOrder = (props: Props) => {
                         <>
                             <p className=''> Tên : <span className='font-medium'>{userData.name}</span></p>
                             <p className=''> SDT : <span className='font-medium'>{userData.phone}</span></p>
-                            <p className=''> Địa Chỉ : <span className='font-medium'>{cart?.address}</span></p>
+                            <p className=''> Địa Chỉ : <span className='font-medium'>{cart.address}</span></p>
                         </>
                     )}
                 </div>

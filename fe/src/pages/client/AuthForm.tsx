@@ -5,6 +5,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { AuthApi, ILoginBody, IRegisterBody } from "../../api/authApi";
 import { toast } from "react-toastify";
 import { TOKEN_STORAGE_KEY, USER_INFO_STORAGE_KEY } from "../../constants";
+import Joi from "joi";
+import { joiResolver } from "@hookform/resolvers/joi";
 
 type Props = {
   isLogin?: boolean;
@@ -16,6 +18,16 @@ type Inputs = {
   phone: string;
   password: string;
 };
+const registerSchemma= Joi.object({
+  name: Joi.string().required().trim(),
+  email: Joi.string().required().email({tlds: false}),
+  phone: Joi.number().required(),
+  password: Joi.string().min(6).required(),
+})
+const loginSchemma= Joi.object({
+  email: Joi.string().required().email({tlds: false}),
+  password: Joi.string().min(6).required(),
+})
 
 const AuthForm = ({ isLogin }: Props) => {
   const navigate = useNavigate();
@@ -24,8 +36,10 @@ const AuthForm = ({ isLogin }: Props) => {
     register,
     handleSubmit,
     reset,
-    formState: { isValid },
-  } = useForm<Inputs>();
+    formState: { errors },
+  } = useForm<Inputs>({
+    resolver: joiResolver( isLogin ?registerSchemma : loginSchemma  )
+  });
 
   const onSubmit: SubmitHandler<Inputs> = (values) => {
     if (isLogin) {
@@ -126,56 +140,60 @@ const AuthForm = ({ isLogin }: Props) => {
                   <input
                     type="text"
                     {...register("name", {
-                      required: "Vui lòng nhập họ tên",
+                      required: true
                     })}
                     id=""
                     placeholder="Name"
                     className="bg-gray-100 border-l-4 border-[#00A9FF] w-full py-2 pl-3 outline-none"
                   />
+                  {errors.name&&(
+                    <p className="text-red-500">Tên không được để trống </p>
+                  )}
                 </div>
 
                 <div>
                   <input
                     type="text"
                     {...register("email", {
-                      required: "Vui lòng nhập email",
-                      pattern: {
-                        value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                        message: "Email không đúng định dạng",
-                      },
+                      required: true
                     })}
                     id=""
                     placeholder="Email"
                     className="bg-gray-100 border-l-4 border-[#00A9FF] w-full py-2 pl-3 outline-none"
                   />
+                  {errors.email&&(
+                    <p className="text-red-500">Email không được để trống và Phải đúng định dạng</p>
+                  )}
                 </div>
 
                 <div>
                   <input
                     type="text"
                     {...register("phone", {
-                      required: "Vui lòng nhập số điện thoại",
-                      pattern: {
-                        value: /(84|0[3|5|7|8|9])+([0-9]{8})\b/g,
-                        message: "Số điện thoại không đúng định dạng",
-                      },
+                      required: true
                     })}
                     id=""
                     placeholder="Phone"
                     className="bg-gray-100 border-l-4 border-[#00A9FF] w-full py-2 pl-3 outline-none"
                   />
+                  {errors.phone&&(
+                    <p className="text-red-500">Số điện thoại không được để trống</p>
+                  )}
                 </div>
 
                 <div>
                   <input
                     type="password"
                     {...register("password", {
-                      required: "Vui lòng nhập mật khẩu",
+                      required: true
                     })}
                     id=""
                     placeholder="Password"
                     className="bg-gray-100 border-l-4 border-[#00A9FF] w-full py-2 pl-3 outline-none"
                   />
+                  {errors.password&&(
+                    <p className="text-red-500">Mật khẩu không được để trống và ít nhất 6 kí tự</p>
+                  )}
                 </div>
 
                 <div className="flex justify-end items-center">
@@ -190,7 +208,7 @@ const AuthForm = ({ isLogin }: Props) => {
                 <button
                   type="submit"
                   className="bg-[#00A9FF] w-full py-2 rounded-3xl text-white tracking-widest [&:disabled]:opacity-50"
-                  disabled={!isValid}
+                  disabled={!errors}
                 >
                   REGISTER
                 </button>
@@ -202,27 +220,29 @@ const AuthForm = ({ isLogin }: Props) => {
                   <input
                     type="text"
                     {...register("email", {
-                      required: "Vui lòng nhập email",
-                      pattern: {
-                        value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                        message: "Email không đúng định dạng",
-                      },
+                      required: true
                     })}
                     id=""
                     placeholder="Email"
                     className="bg-gray-100 border-l-4 border-[#00A9FF] w-full py-2 pl-3 outline-none"
                   />
+                  {errors.email&&(
+                    <p className="text-red-500">email không được để trống và phải úng định dạng</p>
+                  )}
                 </div>
                 <div>
                   <input
                     type="password"
                     {...register("password", {
-                      required: "Vui lòng nhập mật khẩu",
+                      required: true
                     })}
                     id=""
                     placeholder="Password"
                     className="bg-gray-100 border-l-4 border-[#00A9FF] w-full py-2 pl-3 outline-none"
                   />
+                  {errors.password&&(
+                    <p className="text-red-500">Mật khẩu không được để trống và ít nhất 6 kí tự</p>
+                  )}
                 </div>
 
                 <div className="flex justify-between items-center">
@@ -250,7 +270,7 @@ const AuthForm = ({ isLogin }: Props) => {
                 <button
                   type="submit"
                   className="bg-[#00A9FF] w-full py-2 rounded-3xl text-white tracking-widest [&:disabled]:opacity-50"
-                  disabled={!isValid}
+                  disabled={!errors}
                 >
                   LOGIN
                 </button>
